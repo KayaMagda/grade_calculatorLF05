@@ -23,6 +23,10 @@ namespace GradeCalculatorDesktop
         public MainWindow()
         {
             InitializeComponent();
+            
+            //adds a new oneStudentRow to the studentTable
+            //public addStudent
+
         }
     }
 }

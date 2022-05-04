@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace GradeCalculatorDesktop
 {
@@ -13,7 +14,7 @@ namespace GradeCalculatorDesktop
         public string firstName { get; set; }
         public GradeData gradeData { get; set; }
 
-        static void serializeStudent(Student student)
+        static void serializeStudent(Student student, FileStream file)
         {
 
         }
