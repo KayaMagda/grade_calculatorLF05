@@ -20,13 +20,30 @@ namespace GradeCalculatorDesktop
     /// </summary>
     public partial class MainWindow : Window
     {
+        Student focusedStudent;
+        Student[] addedStudents;
+        Specialties specialties;
+
         public MainWindow()
         {
             InitializeComponent();
-            
-            //adds a new oneStudentRow to the studentTable
-            //public addStudent
 
-        }
+             public Dictionary<int, string> allSpecialties = new Dictionary<int, string>()
+             {
+                 [0] = "IT-System-Elektroniker_in",
+                 [1] = "Kaufmann/ Kauffrau für Digitalisierungsmanagement",
+                 [2] = "Kaufmann/ Kauffrau für IT-System-Management",
+                 [3] = "Fachinformatiker_in/ Anwendungsentwicklung",
+                 [4] = "Fachinformatiker_in/ Systemintegration",
+                 [5] = "Fachinformatiker_in/ Digitale Vernetzung"
+             };
+
+        //adds a new oneStudentRow to the studentTable
+        //public addStudentRow
+
+        //adds specialties to ComboBox specialtyFilter
+
+
+    }
     }
 }

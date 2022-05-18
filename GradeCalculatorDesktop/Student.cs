@@ -12,7 +12,8 @@ namespace GradeCalculatorDesktop
         public int studentId { get; set; }
         public string lastName { get; set; }
         public string firstName { get; set; }
-        public GradeData gradeData { get; set; }
+        public int specialty { get; set; }
+        public GradeData? gradeData { get; set; }
 
         static void serializeStudent(Student student, FileStream file)
         {
