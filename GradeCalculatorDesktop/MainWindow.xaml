@@ -100,7 +100,7 @@
                 </Style>
             </Button.Resources>
         </Button>
-        <Button x:Name="selectedStudentModifyButton" Content="Bearbeiten" Grid.Column="1" Grid.Row="1" Width="75" Height="30" HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center">
+        <Button x:Name="selectedStudentModifyButton" Content="Bearbeiten" Grid.Column="1" Width="75" Height="30" HorizontalAlignment="Left" Margin="283,0,0,0" VerticalAlignment="Center">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="5"/>
