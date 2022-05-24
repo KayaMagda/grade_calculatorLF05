@@ -12,7 +12,7 @@ namespace GradeCalculatorDesktop
     public partial class MainWindow : Window
     {
         private Student? focusedStudent;
-        private List<Student> addedStudents;
+        private List<Student>? addedStudents;
         private List<Specialty> specialtys;
         private Specialty? selectedSpecialty;
 
@@ -45,7 +45,10 @@ namespace GradeCalculatorDesktop
 
         private void addStudent(object sender, RoutedEventArgs e)
         {
-            var ownedAddStudent = new addStudentDialog(specialtys);
+            var ownedAddStudent = new addStudentDialog();
+            ownedAddStudent.Owner = this;
+            ownedAddStudent.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            
             //ShowDialog only returns if Window was closed
             var studentAdded = ownedAddStudent.ShowDialog();
             //if Window was closed student property of addStudentDialog Class now holds the new student

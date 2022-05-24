@@ -51,7 +51,7 @@
         <Label Grid.Column="0" Grid.Row="3">Fachbereich:</Label>
         <ComboBox Name="studentSpecialty" Grid.Column="1" Grid.Row="3" />
 
-        <Button x:Name="okButton" Click="saveStudent" IsDefault="True" Content="Speichern" Margin="105,28,25,48" Grid.Row="4" Grid.Column="1"/>
-        <Button x:Name="cancelButton" IsCancel="True" Grid.Column="1" Content="Zurück" Margin="30,28,100,48" Grid.Row="4" Background="LightCoral"/>
+        <Button x:Name="okButton" Click="saveStudent" IsDefault="True" Content="Speichern" Margin="90,10,40,65" Grid.Row="4" Grid.Column="1"/>
+        <Button x:Name="cancelButton" IsCancel="True" Grid.Column="1" Content="Zurück" Margin="15,10,115,65" Grid.Row="4" Background="LightCoral"/>
     </Grid>
 </Window>
