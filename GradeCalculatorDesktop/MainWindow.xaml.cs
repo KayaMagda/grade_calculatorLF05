@@ -29,5 +29,15 @@ namespace GradeCalculatorDesktop
         {
 
         }
+
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void add_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
