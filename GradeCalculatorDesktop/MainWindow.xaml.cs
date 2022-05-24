@@ -45,7 +45,7 @@ namespace GradeCalculatorDesktop
 
         private void addStudent(object sender, RoutedEventArgs e)
         {
-            var ownedAddStudent = new addStudentDialog();
+            var ownedAddStudent = new addStudentDialog(specialtys);
             ownedAddStudent.Owner = this;
             ownedAddStudent.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             

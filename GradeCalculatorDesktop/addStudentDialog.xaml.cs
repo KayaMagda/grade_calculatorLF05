@@ -21,18 +21,10 @@ namespace GradeCalculatorDesktop
         private bool firstNameValid = false;
         private bool lastNameValid = false;
 
-        public addStudentDialog()
+        public addStudentDialog(List<Specialty> specialtys)
         {
             InitializeComponent();
-            specialtys = new List<Specialty>()
-             {
-                new Specialty(0, "IT-System-Elektroniker_in", new string[] { "Erstellen, Ändern oder Erweitern von IT-Systemen und von deren Infrastruktur", "Installation von und Service an IT-Geräten, IT-Systemen und IT-Infrastrukturen", "Anbindung von Geräten, Systemen und Betriebsmitteln an die Stromversorgung" }),
-                new Specialty(1, "Kaufmann/ Kauffrau für Digitalisierungsmanagement", new string[] { "Digitale Entwicklung von Prozessen", "Entwicklung eines digitalen Geschäftsmodells", "Kaufmännische Unterstützungsprozesse"}),
-                new Specialty(2, "Kaufmann/ Kauffrau für IT-System-Management", new string[] { "Abwicklung eines Kundenauftrages", "Einführen einer IT-Systemlösung", "Kaufmännische Unterstützungsprozesse"}),
-                new Specialty(3, "Fachinformatiker_in/ Anwendungsentwicklung", new string[] { "Planen und Umsetzen eines Softwareprojektes", "Planen eines Softwareproduktes", "Entwicklung und Umsetzung von Algorithmen"}),
-                new Specialty(4, "Fachinformatiker_in/ Systemintegration", new string[] { "Planen und Umsetzen eines Projektes der Systemintegration", "Konzeption und Administration von IT-Systemen", "Analyse und Entwicklung von Netzwerken"}),
-                new Specialty(5, "Fachinformatiker_in/ Digitale Vernetzung", new string[] { "Planen und Durchführen eines Projektes der Datenanalyse", "Durchführen einer Prozessanalyse", "Sicherstellen der Datenqualität"}),
-             };
+            this.specialtys = specialtys;
             studentSpecialty.ItemsSource = specialtys;
             studentSpecialty.DisplayMemberPath = "specialtyName";
             DataObject.AddPastingHandler(studentNumber, PasteHandler);
@@ -74,6 +66,7 @@ namespace GradeCalculatorDesktop
             if (!isAlphabetical)
             {
                 MessageBox.Show("Bitte nur Buchstaben eingeben.");
+                
             }
             else if (e.Text.Length > 1)
             {
