@@ -126,7 +126,7 @@
         <Label Content="Ergebnis Teil 2" Grid.Column="1" HorizontalAlignment="Left" Margin="20,300,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
         <Label Content="Gesamt" Grid.Column="1" HorizontalAlignment="Left" Margin="20,330,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
 
-        <Label x:Name="student_AP_Teil_1_Procent" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="270,10,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
+        <TextBox x:Name="student_AP_Teil_1_Procent"  Grid.Column="1" HorizontalAlignment="Left" Margin="270,10,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Width="30"/>
         <Label x:Name="student_AP_Teil_2_Procent" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="270,50,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
         <Label x:Name="student_Project_Procent" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="270,80,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
         <Label x:Name="student_Presentation_Procent" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="270,110,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
