@@ -15,7 +15,7 @@ namespace GradeCalculatorDesktop
         public int specialty { get; set; }
         public GradeData? gradeData { get; set; }
 
-        static void serializeStudent(Student student, FileStream file)
+        public void serializeStudent(Student student, FileStream file)
         {
 
         }
