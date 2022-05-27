@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Text.Json;
 
 namespace GradeCalculatorDesktop
 {
@@ -15,9 +16,13 @@ namespace GradeCalculatorDesktop
         public int specialty { get; set; }
         public GradeData? gradeData { get; set; }
 
-        public void serializeStudent(Student student, FileStream file)
+        public static void serializeStudent(Student student, string filePath)
         {
-
+            using (StreamWriter writer = File.AppendText(filePath))
+            {
+                String studentString = JsonSerializer.Serialize<Student>(student);
+                writer.WriteLine(studentString + ";");
+            }
         }
 
     }

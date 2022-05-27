@@ -1,100 +1,103 @@
 ﻿<Window x:Class="GradeCalculatorDesktop.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:GradeCalculatorDesktop"
         mc:Ignorable="d"
         Title="Grade Calculator || Kaya and Denis"
-        Height="550" Width="800" 
+        Height="550" Width="800"
         Background="#272537">
 
     <Grid>
+        <Grid.Resources>
+            <Style x:Key="Triggers" TargetType="{x:Type TextBox}">
+                <Setter Property="Background" Value="AliceBlue" />
+                <Setter Property="MaxLength" Value="3" />
+                <Setter Property="Opacity" Value="0.7" />
+            </Style>
+        </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="460"/>
+            <RowDefinition Height="60" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="460" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="328"/>
-            <ColumnDefinition Width="472"/>
+            <ColumnDefinition Width="328" />
+            <ColumnDefinition Width="472" />
         </Grid.ColumnDefinitions>
         <ComboBox x:Name="specialtyFilter" FontSize="15" Width="230" Margin="10,0,0,0" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center">
             <ComboBox.Resources>
                 <Style TargetType="{x:Type Border}">
-                    <Setter Property="CornerRadius" Value="5"/>
+                    <Setter Property="CornerRadius" Value="5" />
                 </Style>
             </ComboBox.Resources>
-            <ComboBoxItem x:Name="specialtyFilterItem" Height="30" Content="test" VerticalAlignment="Center" Background="#ecf0f1"/>
+            <ComboBoxItem x:Name="specialtyFilterItem" Height="30" Content="test" VerticalAlignment="Center" Background="#ecf0f1" />
         </ComboBox>
 
         <Button x:Name="fromFile" Grid.Column="0" Width="30" Height="30" Margin="250,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
-                    <Setter Property="CornerRadius" Value="5"/>
+                    <Setter Property="CornerRadius" Value="5" />
                 </Style>
             </Button.Resources>
-            <Image Height="20" Width="20" Source="https://cdn-icons-png.flaticon.com/512/101/101671.png"/>
+            <Image Height="20" Width="20" Source="https://cdn-icons-png.flaticon.com/512/101/101671.png" />
         </Button>
-        <Button x:Name="add" Grid.Column="0" Width="30" Height="30" Margin="290,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Click="addStudent" >
+        <Button x:Name="add" Grid.Column="0" Width="30" Height="30" Margin="290,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Click="addStudent">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
-                    <Setter Property="CornerRadius" Value="5"/>
+                    <Setter Property="CornerRadius" Value="5" />
                 </Style>
             </Button.Resources>
-            <Image Height="25" Width="25" Source="https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/OOjs_UI_icon_add.svg/1024px-OOjs_UI_icon_add.svg.png"/>
+            <Image Height="25" Width="25" Source="https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/OOjs_UI_icon_add.svg/1024px-OOjs_UI_icon_add.svg.png" />
         </Button>
-        <Label Content="Nummer" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="1" VerticalAlignment="Center" Foreground="AliceBlue" Height="26" Width="57"/>
-        <Label Content="Name" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Margin="75,0,0,0" Foreground="AliceBlue" Height="26" Width="42"/>
-        <Label Content="Vorname" HorizontalAlignment="Left" Margin="175,0,0,0" Grid.Row="1" VerticalAlignment="Center" Foreground="AliceBlue" Height="26" Width="57"/>
-        <ListBox x:Name="studentTable" Grid.Row="2" Margin="0,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" Height="360" Width="310" Background="Transparent" BorderThickness="0">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Style.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="5"/>
-                        </Style>
-                    </Style.Resources>
-                </Style>
-            </ListBox.ItemContainerStyle>
-            <ListBoxItem x:Name="oneStudent" Height="60" Background="Transparent" Width="270" HorizontalAlignment="Left" >
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="60"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="110"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                    </Grid.RowDefinitions>
-                    <Label x:Name="oneStudentNumber" Content="123456" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="AliceBlue" Height="26" Width="60" Margin="-5,0,0,0"/>
-                    <Label x:Name="oneStudentName" Content="FamilyName" Grid.Column="1" HorizontalAlignment="Left"  VerticalAlignment="Center" Foreground="AliceBlue" Height="26" Width="100"/>
-                    <Label x:Name="oneStudentVorname" Content="JustNameTest" Grid.Column="2" HorizontalAlignment="Left"  VerticalAlignment="Center" Foreground="AliceBlue" Height="26" Width="100"/>
-                </Grid>
-            </ListBoxItem>
+        <Label Content="Nummer" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="1" VerticalAlignment="Center" Foreground="AliceBlue" Height="26" Width="57" />
+        <Label Content="Name" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Margin="75,0,0,0" Foreground="AliceBlue" Height="26" Width="42" />
+        <Label Content="Vorname" HorizontalAlignment="Left" Margin="175,0,0,0" Grid.Row="1" VerticalAlignment="Center" Foreground="AliceBlue" Height="26" Width="57" />
+        <ListBox x:Name="studentTable" Grid.Row="2" Margin="0,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" Height="427" Width="310" Background="Transparent" BorderThickness="0" SelectionChanged="focusStudent">
+            <Style TargetType="ListBoxItem">
+                <Setter Property="BorderBrush" Value="AliceBlue" />
+                <Setter Property="BorderThickness" Value="1" />
+            </Style>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="110" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                        </Grid.RowDefinitions>
+                        <Label Content="{Binding Path=studentId}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="AliceBlue" Height="26" Width="60" Margin="-5,0,0,0" />
+                        <Label Content="{Binding Path=lastName}" Grid.Column="1" HorizontalAlignment="Left"  VerticalAlignment="Center" Foreground="AliceBlue" Height="26" Width="100" />
+                        <Label Content="{Binding Path=firstName}" Grid.Column="2" HorizontalAlignment="Left"  VerticalAlignment="Center" Foreground="AliceBlue" Height="26" Width="100" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
         </ListBox>
-        <Label x:Name="selectedStudentName" Content="Name Of Student" Grid.Column="1" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" Width="325" Foreground="AliceBlue"/>
-        <Button x:Name="selectedStudentDeleteButton" Content="Löschen" Grid.Column="1" Width="75" Height="30" HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center"  BorderThickness="0">
+        <Label x:Name="selectedStudentName" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" Width="325" Foreground="AliceBlue" />
+        <Button x:Name="selectedStudentDeleteButton" Content="Löschen" Grid.Column="1" Width="75" Height="30" HorizontalAlignment="Right" Margin="0,0,30,0" VerticalAlignment="Center"  BorderBrush="Red" BorderThickness="2" ToolTip="Löscht den Prüfling aus der Liste">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
-                    <Setter Property="CornerRadius" Value="5"/>
+                    <Setter Property="CornerRadius" Value="5" />
                 </Style>
                 <Style TargetType="{x:Type Button}">
-                    <Setter Property="Background" Value="#272537"/>
-                    <Setter Property="Foreground" Value="#e74c3c"/>
+                    <Setter Property="Background" Value="#272537" />
+                    <Setter Property="Foreground" Value="#e74c3c" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type Button}">
                                 <Border Background="{TemplateBinding Background}">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 </Border>
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
                     <Style.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="AliceBlue"/>
-                            <Setter Property="Background" Value="#e74c3c"/>
+                            <Setter Property="Foreground" Value="AliceBlue" />
+                            <Setter Property="Background" Value="#e74c3c" />
                         </Trigger>
                     </Style.Triggers>
                 </Style>
@@ -103,54 +106,51 @@
         <Button x:Name="selectedStudentModifyButton" Content="Bearbeiten" Grid.Column="1" Width="75" Height="30" HorizontalAlignment="Left" Margin="283,0,0,0" VerticalAlignment="Center">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
-                    <Setter Property="CornerRadius" Value="5"/>
+                    <Setter Property="CornerRadius" Value="5" />
                 </Style>
             </Button.Resources>
         </Button>
-        <Button Content="Speichern" Grid.Column="1" Width="75" Height="30" HorizontalAlignment="Right" Margin="0,375,30,0" Grid.Row="2" VerticalAlignment="Top">
+        <Button Content="Speichern" Grid.Column="1" Width="75" Height="30" HorizontalAlignment="Right" Margin="0,375,30,0" Grid.Row="2" VerticalAlignment="Top" Click="saveStudent">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
-                    <Setter Property="CornerRadius" Value="5"/>
+                    <Setter Property="CornerRadius" Value="5" />
                 </Style>
             </Button.Resources>
         </Button>
-        <Label Content="Abschlussprüfung Teil 1" Grid.Column="1" HorizontalAlignment="Left" Margin="20,10,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label Content="Abschlussprüfung Teil 2" Grid.Column="1" HorizontalAlignment="Left" Margin="20,50,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label Content="Projekt" Grid.Column="1" HorizontalAlignment="Left" Margin="30,80,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label Content="Präsentation + Fachgespräch" Grid.Column="1" HorizontalAlignment="Left" Margin="30,110,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label Content="Projektbereich Gesamt" Grid.Column="1" HorizontalAlignment="Left" Margin="30,140,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label Content="Theorie 1" Grid.Column="1" HorizontalAlignment="Left" Margin="30,170,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label Content="Theorie 2" Grid.Column="1" HorizontalAlignment="Left" Margin="30,200,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label Content="Wirtschaft und Sozialkunde" Grid.Column="1" HorizontalAlignment="Left" Margin="30,230,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label Content="Mundliche Zusatzprüfung" Grid.Column="1" HorizontalAlignment="Left" Margin="30,260,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label Content="Ergebnis Teil 2" Grid.Column="1" HorizontalAlignment="Left" Margin="20,300,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label Content="Gesamt" Grid.Column="1" HorizontalAlignment="Left" Margin="20,330,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
+        <Label x:Name="standardAssessmentOne" Content="Abschlussprüfung Teil 1" Grid.Column="1" HorizontalAlignment="Left" Margin="20,10,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="standardAssessmentTwo" Content="Abschlussprüfung Teil 2" Grid.Column="1" HorizontalAlignment="Left" Margin="20,50,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="variablePracticalAssessment" Content="Projekt" Grid.Column="1" HorizontalAlignment="Left" Margin="30,80,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="variablePresentation" Content="Präsentation + Fachgespräch" Grid.Column="1" HorizontalAlignment="Left" Margin="30,110,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="variableProjectCompleteMark" Content="Projektbereich Gesamt" Grid.Column="1" HorizontalAlignment="Left" Margin="30,140,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="variableAssessmentOne" Content="Theorie 1" Grid.Column="1" HorizontalAlignment="Left" Margin="30,170,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="variableAssessmentTwo" Content="Theorie 2" Grid.Column="1" HorizontalAlignment="Left" Margin="30,200,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="standardEconomyAssessment" Content="Wirtschaft und Sozialkunde" Grid.Column="1" HorizontalAlignment="Left" Margin="30,230,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="oralAssessment" Content="Mündliche Zusatzprüfung" Grid.Column="1" HorizontalAlignment="Left" Margin="30,260,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="markPartTwo" Content="Ergebnis Teil 2" Grid.Column="1" HorizontalAlignment="Left" Margin="20,300,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="wholeMark" Content="Gesamt" Grid.Column="1" HorizontalAlignment="Left" Margin="20,330,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
 
-        <TextBox x:Name="student_AP_Teil_1_Procent"  Grid.Column="1" HorizontalAlignment="Left" Margin="270,10,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Width="30"/>
-        <Label x:Name="student_AP_Teil_2_Procent" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="270,50,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Project_Procent" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="270,80,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Presentation_Procent" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="270,110,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Project_Total_Procent" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="270,140,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Theory1_Procent" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="270,170,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Theory2_Procent" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="270,200,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Economy_Procent" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="270,230,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Verbal_Procent" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="270,260,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Result_Procent" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="270,300,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Total_Procent" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="270,330,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
+        <TextBox LostFocus="writeToMarkLabel" PreviewTextInput="onlyNumbersAllowed" BorderThickness="0" x:Name="student_AP_Teil_1_Procent"  Grid.Column="1" HorizontalAlignment="Left" Margin="270,10,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" />
+        <TextBox LostFocus="writeToMarkLabel" PreviewTextInput="onlyNumbersAllowed" BorderThickness="0" x:Name="student_Project_Procent"  Grid.Column="1" HorizontalAlignment="Left" Margin="270,80,0,0" Grid.Row="2" VerticalAlignment="Top" Width="30" />
+        <TextBox LostFocus="writeToMarkLabel" PreviewTextInput="onlyNumbersAllowed" BorderThickness="0" x:Name="student_Presentation_Procent"  Grid.Column="1" HorizontalAlignment="Left" Margin="270,110,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" />
+        <Label Foreground="AliceBlue" Content="  -" x:Name="student_Project_Total_Procent"  Grid.Column="1" HorizontalAlignment="Left" Margin="270,140,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" />
+        <TextBox LostFocus="writeToMarkLabel" PreviewTextInput="onlyNumbersAllowed" BorderThickness="0" x:Name="student_Theory1_Procent"  Grid.Column="1" HorizontalAlignment="Left" Margin="270,170,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" />
+        <TextBox LostFocus="writeToMarkLabel" PreviewTextInput="onlyNumbersAllowed" BorderThickness="0" x:Name="student_Theory2_Procent"  Grid.Column="1" HorizontalAlignment="Left" Margin="270,200,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" />
+        <TextBox LostFocus="writeToMarkLabel" PreviewTextInput="onlyNumbersAllowed" BorderThickness="0" x:Name="student_Economy_Procent"  Grid.Column="1" HorizontalAlignment="Left" Margin="270,230,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" />
+        <TextBox LostFocus="writeToMarkLabel" PreviewTextInput="onlyNumbersAllowed" BorderThickness="0" x:Name="student_Verbal_Procent"  Grid.Column="1" HorizontalAlignment="Left" Margin="270,260,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" />
+        <Label Foreground="AliceBlue" Content="  -" BorderThickness="0" x:Name="student_Result_Procent"  Grid.Column="1" HorizontalAlignment="Left" Margin="270,300,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" />
+        <Label Foreground="AliceBlue" Content="  -" BorderThickness="0" x:Name="student_Total_Procent"  Grid.Column="1" HorizontalAlignment="Left" Margin="270,330,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" />
 
-        <Label x:Name="student_AP_Teil_1_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,10,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_AP_Teil_2_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,50,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Project_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,80,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Presentation_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,110,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Project_Total_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,140,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Theory1_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,170,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Theory2_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,200,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Economy_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,230,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Verbal_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,260,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Result_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,300,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label x:Name="student_Total_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,330,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue"/>
-        <Label Content="Bestanden" Grid.Column="1" HorizontalAlignment="Left" Margin="250,375,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="#2ecc71"/>
+        <Label x:Name="student_AP_Teil_1_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,10,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="student_AP_Teil_2_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,50,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="student_Project_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,80,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="student_Presentation_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,110,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="student_Project_Total_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,140,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="student_Theory1_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,170,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="student_Theory2_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,200,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="student_Economy_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,230,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="student_Verbal_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,260,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="student_Result_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,300,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label x:Name="student_Total_Mark" Content="-" Grid.Column="1" HorizontalAlignment="Left" Margin="385,330,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" />
+        <Label Content="Bestanden" Grid.Column="1" HorizontalAlignment="Left" Margin="250,375,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="#2ecc71" />
     </Grid>
-
-
 </Window>

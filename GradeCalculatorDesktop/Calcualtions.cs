@@ -4,7 +4,7 @@
     {
         //calculate Grade from given percentage
         //100-92 = 1, 91-81 = 2, 80 - 67 = 3, 66 - 50 = 4, 49 - 30 = 5, 29 - 0 = 6
-        public int calculateGrade(int points)
+        public static int calculateGrade(int points)
         {
             if (points >= 0 && points <= 29)
             {

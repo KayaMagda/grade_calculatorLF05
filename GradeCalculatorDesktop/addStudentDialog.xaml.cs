@@ -32,23 +32,19 @@ namespace GradeCalculatorDesktop
 
         public void onlyNumbersAllowed(object sender, TextCompositionEventArgs e)
         {
-            Regex regex = new Regex("[^0-9.-]+");
+            TextBox tb = sender as TextBox;
+            Regex regex = new Regex("^[0-9]+$");
             bool isNumber = regex.IsMatch(e.Text);
             if (!isNumber)
             {
                 MessageBox.Show("Bitte nur Zahlen eingeben.");
+                e.Handled = true;
             }
-            else
+            if (tb.Text.Length == 6)
             {
-                if (e.Text.Length > 7)
-                {
-                    MessageBox.Show("Schülernummern bestehen aus höchstens sieben Ziffern.");
-                }
-                else
-                {
-                    e.Handled = true;
-                }
+                studentNumberValid = true;
             }
+            
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -61,16 +57,15 @@ namespace GradeCalculatorDesktop
         {
             TextBox tb = sender as TextBox;
 
-            Regex regex = new Regex(@" ^\\p{ L } + $");
+            Regex regex = new Regex(@"^\p{L}+$");
             bool isAlphabetical = regex.IsMatch(e.Text);
             if (!isAlphabetical)
             {
                 MessageBox.Show("Bitte nur Buchstaben eingeben.");
                 
             }
-            else if (e.Text.Length > 1)
+            if (tb.Text.Length > 1)
             {
-                e.Handled = true;
                 if (tb.Name == "firstName")
                 {
                     firstNameValid = true;
@@ -130,12 +125,17 @@ namespace GradeCalculatorDesktop
                     firstName = firstName.Text,
                     lastName = lastName.Text,
                     specialty = selectedSpecialty!.specialtyId
-                };               
+                };
+                DialogResult = true;
             }
             else
             {
                 MessageBox.Show("Bitte gib valide Schüler Daten ein.");
             }
+        }
+        private void closeDialog(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
         }
     }
 }

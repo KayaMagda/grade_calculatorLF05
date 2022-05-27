@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Win32;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +17,7 @@ namespace GradeCalculatorDesktop
         private List<Student>? addedStudents;
         private List<Specialty> specialtys;
         private Specialty? selectedSpecialty;
+        private TextBox[] allTextBoxes;
 
         public MainWindow()
         {
@@ -33,8 +36,7 @@ namespace GradeCalculatorDesktop
             specialtyFilter.Items.Clear();
             specialtyFilter.ItemsSource = specialtys;
             specialtyFilter.DisplayMemberPath = "specialtyName";
-            
-
+            allTextBoxes = new TextBox[] { student_AP_Teil_1_Procent, student_Project_Procent, student_Presentation_Procent, student_Theory1_Procent, student_Theory2_Procent, student_Economy_Procent, student_Verbal_Procent };
 
         }
 
@@ -46,22 +48,21 @@ namespace GradeCalculatorDesktop
         private void addStudent(object sender, RoutedEventArgs e)
         {
             var ownedAddStudent = new addStudentDialog(specialtys);
-            ownedAddStudent.Owner = this;
-            ownedAddStudent.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            
+
             //ShowDialog only returns if Window was closed
-            var studentAdded = ownedAddStudent.ShowDialog();
+            System.Nullable<bool> studentAdded = ownedAddStudent.ShowDialog();
             //if Window was closed student property of addStudentDialog Class now holds the new student
-            if (studentAdded != null)
+            if (studentAdded != null && studentAdded == true)
             {
                 if(addedStudents != null && ownedAddStudent.student != null)
                 {
                     addedStudents.Add(ownedAddStudent.student);
-                    //addStudentRow
+                    studentTable.ItemsSource = addedStudents;
                 }
                 else if(ownedAddStudent.student != null)
                 {
                     addedStudents = new List<Student> { ownedAddStudent.student };
+                    studentTable.ItemsSource = addedStudents;
                 }
 
             }
@@ -72,9 +73,109 @@ namespace GradeCalculatorDesktop
         {
 
         }
+        public void focusStudent(object sender, SelectionChangedEventArgs e)
+        {
+            focusedStudent = studentTable.SelectedValue as Student;
+
+            Specialty focusedStudentSpecialty = specialtys.Find(specialty => specialty.specialtyId == focusedStudent.specialty);
+            string[] assessmentNames = focusedStudentSpecialty.specialtyVariableAssesments;
+
+            standardAssessmentTwo.Content = assessmentNames[0];
+            variableAssessmentOne.Content = assessmentNames[1];
+            variableAssessmentTwo.Content = assessmentNames[2];
+
+            if (focusedStudent != null)
+            {
+                selectedStudentName.Content = focusedStudent.firstName + " " + focusedStudent.lastName;
+                if (focusedStudent.gradeData != null)
+                {
+                    GradeData gD = focusedStudent.gradeData;
+                    if(gD.percentagePB1 != null)
+                    {
+                        student_AP_Teil_1_Procent.Text = gD.percentagePB1;
+                    }
+                    if(gD.percentageProject != null)
+                    {
+                        student_Project_Procent.Text = gD.percentageProject;
+                    }
+                    if (gD.percentagePresentation != null)
+                    {
+                        student_Presentation_Procent.Text = gD.percentagePresentation;
+                    }
+                    if(gD.percentageVariableOne != null)
+                    {
+                        student_Theory1_Procent.Text = gD.percentageVariableOne;
+                    }
+                    if(gD.percentageVariableTwo != null)
+                    {
+                        student_Theory2_Procent.Text = gD.percentageVariableTwo;
+                    }
+                    if(gD.percentageWiSo != null)
+                    {
+                        student_Economy_Procent.Text = gD.percentageWiSo;
+                    }
+                    if(gD.percentageOralAssessment != null)
+                    {
+                        student_Verbal_Procent.Text = gD.percentageOralAssessment;
+                    }
+
+                    Specialty focusedStudentSpecialty = specialtys.Find(specialty => specialty.specialtyId == focusedStudent.specialty);
+                    string[] assessmentNames = focusedStudentSpecialty.specialtyVariableAssesments;
+
+                    standardAssessmentTwo.Content = assessmentNames[0];
+                    variableAssessmentOne.Content = assessmentNames[1];
+                    variableAssessmentTwo.Content = assessmentNames[2];   
+                    
+                    foreach(TextBox box in allTextBoxes)
+                    {
+                        if (box.Text != "")
+                        {
+                            int percentage = int.Parse(box.Text);
+                            writeMarkToLabel(percentage);
+                        }
+                    }
+                    
+                }
+            }
+        }
+        public void writeMarkToLabel(object sender, RoutedEventArgs e)
+        {
+            TextBox tb = sender as TextBox;
+            int percentage = int.Parse(tb.Text);
+            int grade = Calculations.calculateGrade(percentage);
+            switch (tb.Name)
+            {
+                case "student_AP_Teil_1_Procent":
+                    student_AP_Teil_1_Mark.Content = grade;
+                    break;
+            }
+
+        }
+        public void writeMarkToLabel(int percentage)
+        {
+            int grade = Calculations.calculateGrade(percentage);
+        }
 
         //opens a .prf file to save a Student into
+        public void saveStudent(object sender, RoutedEventArgs e)
+        {
+            string filePath = "";
 
+            OpenFileDialog chooseFile = new OpenFileDialog();
+            chooseFile.Title = "Datei wählen.";
+            chooseFile.InitialDirectory = @"C:\";
+            chooseFile.RestoreDirectory = true;
+            chooseFile.Filter = "prf files (*.prf)|*.prf|All files (*.*)|*.*";
+            chooseFile.FilterIndex = 0;
+            chooseFile.DefaultExt = "prf";
+            
+            if ((bool)chooseFile.ShowDialog())
+            {
+                filePath = chooseFile.FileName;
+                Student.serializeStudent(focusedStudent, filePath);
+            }
+            
+        }
 
 
         //adds a new oneStudentRow to the studentTable
