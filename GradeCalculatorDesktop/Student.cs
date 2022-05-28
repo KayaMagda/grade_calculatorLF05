@@ -16,9 +16,9 @@ namespace GradeCalculatorDesktop
         public int specialty { get; set; }
         public GradeData? gradeData { get; set; }
 
-        public static void serializeStudent(Student student, string filePath)
+        public static async void serializeStudentAsync(Student student, string filePath)
         {
-            using (StreamWriter writer = File.AppendText(filePath))
+            await using (StreamWriter writer = File.AppendText(filePath))
             {
                 String studentString = JsonSerializer.Serialize<Student>(student);
                 writer.WriteLine(studentString + ";");
