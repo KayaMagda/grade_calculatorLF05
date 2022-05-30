@@ -21,6 +21,11 @@ namespace GradeCalculatorDesktop
             await using (StreamWriter writer = File.AppendText(filePath))
             {
                 String studentString = JsonSerializer.Serialize<Student>(student);
+                string[] toRemove = new string[] { "\r", "\n" };
+                foreach (string charToRemove in toRemove)
+                {
+                    studentString = studentString.Replace(charToRemove, string.Empty);
+                }
                 writer.WriteLine(studentString + ";");
             }
         }

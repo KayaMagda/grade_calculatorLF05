@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -15,11 +16,13 @@ namespace GradeCalculatorDesktop
     public partial class MainWindow : Window
     {
         private Student? focusedStudent;
-        private List<Student>? addedStudents;
+        private GradeData? gradeData;
+        private ObservableCollection<Student>? addedStudents;
         private List<Specialty> specialtys;
         private Specialty? selectedSpecialty;
         private TextBox[] allTextBoxes;
-        private bool oralEnbaled = false;
+        private bool oralEnabled = false;
+        private string previouslyOpenedFile;
 
         public MainWindow()
         {
@@ -39,7 +42,12 @@ namespace GradeCalculatorDesktop
             specialtyFilter.ItemsSource = specialtys;
             specialtyFilter.DisplayMemberPath = "specialtyName";
             allTextBoxes = new TextBox[] { student_AP_Teil_1_Procent, student_Project_Procent, student_Presentation_Procent, student_Theory1_Procent, student_Theory2_Procent, student_Economy_Procent, student_Verbal_Procent };
-            student_Verbal_Procent.IsEnabled = oralEnbaled;
+            student_Verbal_Procent.IsEnabled = oralEnabled;
+            foreach (TextBox box in allTextBoxes)
+            {
+                box.IsEnabled = false;
+            }
+            studentTable.Items.Clear();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -63,39 +71,57 @@ namespace GradeCalculatorDesktop
                 }
                 else if (ownedAddStudent.student != null)
                 {
-                    addedStudents = new List<Student> { ownedAddStudent.student };
+                    addedStudents = new ObservableCollection<Student> { ownedAddStudent.student };
                     studentTable.ItemsSource = addedStudents;
                 }
             }
         }
 
         //opens a .prf file to read Students from
-        public void readStudentsFromFile()
+        public void readStudentsFromFile(object sender, RoutedEventArgs e)
         {
             string filePath = "";
-
-            OpenFileDialog chooseFile = new OpenFileDialog();
-            chooseFile.Title = "Datei wählen.";
-            chooseFile.InitialDirectory = @"C:\";
-            chooseFile.RestoreDirectory = true;
-            chooseFile.Filter = "prf files (*.prf)|*.prf|All files (*.*)|*.*";
-            chooseFile.FilterIndex = 0;
-            chooseFile.DefaultExt = "prf";
-
-            if ((bool)chooseFile.ShowDialog())
+            if (filePath == previouslyOpenedFile)
             {
-                filePath = chooseFile.FileName;
-                string fileContent = File.ReadAllText(filePath);
-                string[] asStudents = fileContent.Split(';');
-                foreach (string jsonStudent in asStudents)
+                MessageBox.Show("Diese Daten wurden bereits geladen.");
+            }
+            else
+            {
+                previouslyOpenedFile = filePath;
+                OpenFileDialog chooseFile = new OpenFileDialog();
+                chooseFile.Title = "Datei wählen.";
+                chooseFile.InitialDirectory = @"C:\";
+                chooseFile.RestoreDirectory = true;
+                chooseFile.Filter = "prf files (*.prf)|*.prf|All files (*.*)|*.*";
+                chooseFile.FilterIndex = 0;
+                chooseFile.DefaultExt = "prf";
+
+                if ((bool)chooseFile.ShowDialog())
                 {
-                    Student? student = JsonSerializer.Deserialize<Student>(jsonStudent);
-                    if (addedStudents != null && student != null)
-                    { addedStudents.Add(student); }
-                    else if (student != null)
+                    filePath = chooseFile.FileName;
+                    string fileContent = File.ReadAllText(filePath);
+                    string[] toRemove = new string[] { "\r", "\n" };
+                    foreach (string charToRemove in toRemove)
                     {
-                        addedStudents = new List<Student>();
-                        addedStudents.Add(student);
+                        fileContent = fileContent.Replace(charToRemove, string.Empty);
+                    }
+
+                    string[] asStudents = fileContent.Split(';');
+                    foreach (string jsonStudent in asStudents)
+                    {
+                        if (jsonStudent != string.Empty)
+                        {
+                            Student? student = JsonSerializer.Deserialize<Student>(jsonStudent);
+
+                            if (addedStudents != null && student != null)
+                            { addedStudents.Add(student); }
+                            else if (student != null)
+                            {
+                                addedStudents = new ObservableCollection<Student>();
+                                studentTable.ItemsSource = addedStudents;
+                                addedStudents.Add(student);
+                            }
+                        }
                     }
                 }
             }
@@ -103,61 +129,74 @@ namespace GradeCalculatorDesktop
 
         public void focusStudent(object sender, SelectionChangedEventArgs e)
         {
-            focusedStudent = studentTable.SelectedValue as Student;
-
-            Specialty focusedStudentSpecialty = specialtys.Find(specialty => specialty.specialtyId == focusedStudent.specialty);
-            string[] assessmentNames = focusedStudentSpecialty.specialtyVariableAssesments;
-
-            standardAssessmentTwo.Content = assessmentNames[0];
-            variableAssessmentOne.Content = assessmentNames[1];
-            variableAssessmentTwo.Content = assessmentNames[2];
-
-            if (focusedStudent != null)
+            if (studentTable.SelectedItem != null)
             {
-                selectedStudentName.Content = focusedStudent.firstName + " " + focusedStudent.lastName;
-                if (focusedStudent.gradeData != null)
+                focusedStudent = studentTable.SelectedValue as Student;
+                foreach (TextBox box in allTextBoxes)
                 {
-                    GradeData gD = focusedStudent.gradeData;
-                    if (gD.percentagePB1 != null)
-                    {
-                        student_AP_Teil_1_Procent.Text = gD.percentagePB1;
-                    }
-                    if (gD.percentageProject != null)
-                    {
-                        student_Project_Procent.Text = gD.percentageProject;
-                    }
-                    if (gD.percentagePresentation != null)
-                    {
-                        student_Presentation_Procent.Text = gD.percentagePresentation;
-                    }
-                    if (gD.percentageVariableOne != null)
-                    {
-                        student_Theory1_Procent.Text = gD.percentageVariableOne;
-                    }
-                    if (gD.percentageVariableTwo != null)
-                    {
-                        student_Theory2_Procent.Text = gD.percentageVariableTwo;
-                    }
-                    if (gD.percentageWiSo != null)
-                    {
-                        student_Economy_Procent.Text = gD.percentageWiSo;
-                    }
-                    if (gD.percentageOralAssessment != null)
-                    {
-                        student_Verbal_Procent.Text = gD.percentageOralAssessment;
-                    }
+                    if (box.Name != "student_Verbal_Procent")
+                    { box.IsEnabled = true; }
+                }
 
-                    standardAssessmentTwo.Content = assessmentNames[0];
-                    variableAssessmentOne.Content = assessmentNames[1];
-                    variableAssessmentTwo.Content = assessmentNames[2];
+                Specialty focusedStudentSpecialty = specialtys.Find(specialty => specialty.specialtyId == focusedStudent.specialty);
+                string[] assessmentNames = focusedStudentSpecialty.specialtyVariableAssesments;
 
-                    foreach (TextBox box in allTextBoxes)
+                standardAssessmentTwo.Content = assessmentNames[0];
+                variableAssessmentOne.Content = assessmentNames[1];
+                variableAssessmentTwo.Content = assessmentNames[2];
+
+                if (focusedStudent != null)
+                {
+                    selectedStudentName.Content = focusedStudent.firstName + " " + focusedStudent.lastName;
+                    if (focusedStudent.gradeData != null)
                     {
-                        if (box.Text != "")
+                        gradeData = focusedStudent.gradeData;
+                        if (gradeData.percentagePB1 != null)
                         {
-                            int percentage = int.Parse(box.Text);
-                            writeMarkToLabel(percentage, box.Name);
+                            student_AP_Teil_1_Procent.Text = gradeData.percentagePB1;
                         }
+                        if (gradeData.percentageProject != null)
+                        {
+                            student_Project_Procent.Text = gradeData.percentageProject;
+                        }
+                        if (gradeData.percentagePresentation != null)
+                        {
+                            student_Presentation_Procent.Text = gradeData.percentagePresentation;
+                        }
+                        if (gradeData.percentageVariableOne != null)
+                        {
+                            student_Theory1_Procent.Text = gradeData.percentageVariableOne;
+                        }
+                        if (gradeData.percentageVariableTwo != null)
+                        {
+                            student_Theory2_Procent.Text = gradeData.percentageVariableTwo;
+                        }
+                        if (gradeData.percentageWiSo != null)
+                        {
+                            student_Economy_Procent.Text = gradeData.percentageWiSo;
+                        }
+                        if (gradeData.percentageOralAssessment != null)
+                        {
+                            student_Verbal_Procent.Text = gradeData.percentageOralAssessment;
+                        }
+
+                        standardAssessmentTwo.Content = assessmentNames[0];
+                        variableAssessmentOne.Content = assessmentNames[1];
+                        variableAssessmentTwo.Content = assessmentNames[2];
+
+                        foreach (TextBox box in allTextBoxes)
+                        {
+                            if (box.Text != "")
+                            {
+                                int percentage = int.Parse(box.Text);
+                                writeMarkToLabel(percentage, box.Name);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        gradeData = new GradeData();
+                        focusedStudent.gradeData = gradeData;
                     }
                 }
             }
@@ -166,11 +205,65 @@ namespace GradeCalculatorDesktop
         public void writeMarkToLabel(object sender, RoutedEventArgs e)
         {
             TextBox tb = sender as TextBox;
-            if (tb.Text != string.Empty)
+            int asNumber = int.Parse(tb.Text);
+            if (tb.Text != string.Empty && asNumber > 0 && asNumber <= 100)
             {
                 int percentage = int.Parse(tb.Text);
                 int grade = Calculations.calculateGrade(percentage);
                 switch (tb.Name)
+                {
+                    case "student_AP_Teil_1_Procent":
+                        gradeData.percentagePB1 = tb.Text;
+                        student_AP_Teil_1_Mark.Content = grade;
+                        break;
+
+                    case "student_Project_Procent":
+                        gradeData.percentageProject = tb.Text;
+                        student_Project_Mark.Content = grade;
+                        break;
+
+                    case "student_Presentation_Procent":
+                        gradeData.percentagePresentation = tb.Text;
+                        student_Presentation_Mark.Content = grade;
+                        break;
+
+                    case "student_Theory1_Procent":
+                        gradeData.percentageVariableOne = tb.Text;
+                        student_Theory1_Mark.Content = grade;
+                        break;
+
+                    case "student_Theory2_Procent":
+                        gradeData.percentageVariableTwo = tb.Text;
+                        student_Theory2_Mark.Content = grade;
+                        break;
+
+                    case "student_Economy_Procent":
+                        gradeData.percentageWiSo = tb.Text;
+                        student_Economy_Mark.Content = grade;
+                        break;
+
+                    case "student_Verbal_Procent":
+                        gradeData.percentageOralAssessment = tb.Text;
+                        student_Verbal_Mark.Content = grade;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Bitte gib nur Punktzahlen zwischen 0 und 100 ein.");
+                tb.Text = string.Empty;
+            }
+        }
+
+        public void writeMarkToLabel(int percentage, string textBoxName)
+        {
+            int grade = Calculations.calculateGrade(percentage);
+            if (tb.Text != string.Empty && percentage > 0 && percentage <= 100)
+            {
+                switch (textBoxName)
                 {
                     case "student_AP_Teil_1_Procent":
                         student_AP_Teil_1_Mark.Content = grade;
@@ -204,48 +297,14 @@ namespace GradeCalculatorDesktop
                         break;
                 }
             }
-        }
-
-        public void writeMarkToLabel(int percentage, string textBoxName)
-        {
-            int grade = Calculations.calculateGrade(percentage);
-            switch (textBoxName)
+            else
             {
-                case "student_AP_Teil_1_Procent":
-                    student_AP_Teil_1_Mark.Content = grade;
-                    break;
-
-                case "student_Project_Procent":
-                    student_Project_Mark.Content = grade;
-                    break;
-
-                case "student_Presentation_Procent":
-                    student_Presentation_Mark.Content = grade;
-                    break;
-
-                case "student_Theory1_Procent":
-                    student_Theory1_Mark.Content = grade;
-                    break;
-
-                case "student_Theory2_Procent":
-                    student_Theory2_Mark.Content = grade;
-                    break;
-
-                case "student_Economy_Procent":
-                    student_Economy_Mark.Content = grade;
-                    break;
-
-                case "student_Verbal_Procent":
-                    student_Verbal_Mark.Content = grade;
-                    break;
-
-                default:
-                    break;
+                MessageBox.Show("Diese Punktzahl befindet sich nicht im Bereich 0-100.");
             }
         }
 
         //opens a .prf file to save a Student into
-        public void saveStudent(object sender, RoutedEventArgs e)
+        public async void saveStudent(object sender, RoutedEventArgs e)
         {
             string filePath = "";
 
@@ -257,10 +316,41 @@ namespace GradeCalculatorDesktop
             chooseFile.FilterIndex = 0;
             chooseFile.DefaultExt = "prf";
 
+            string studentString = JsonSerializer.Serialize<Student>(focusedStudent);
+
             if ((bool)chooseFile.ShowDialog())
             {
                 filePath = chooseFile.FileName;
-                Student.serializeStudentAsync(focusedStudent, filePath);
+                string fileContent = File.ReadAllText(filePath);
+                string[] toRemove = new string[] { "\r", "\n" };
+                foreach (string charToRemove in toRemove)
+                {
+                    fileContent = fileContent.Replace(charToRemove, string.Empty);
+                }
+                string compareString = studentString.Substring(0, 21);
+
+                string[] asStudents = fileContent.Split(';');
+
+                foreach (string savedStudent in asStudents)
+                {
+                    if (savedStudent != string.Empty)
+                    {
+                        if (savedStudent.Contains(compareString))
+                        {
+                            fileContent = fileContent.Replace(savedStudent, studentString);
+                            await using (StreamWriter writer = new StreamWriter(filePath))
+                            {
+                                writer.WriteLine(fileContent);
+                            }
+                            MessageBox.Show("Prüflingsdaten wurden gespeichert.");
+                        }
+                        else
+                        {
+                            Student.serializeStudentAsync(focusedStudent, filePath);
+                            MessageBox.Show("Prüflingsdaten wurden gespeichert.");
+                        }
+                    }
+                }
             }
         }
 
@@ -288,6 +378,10 @@ namespace GradeCalculatorDesktop
                     MessageBox.Show("Die Punktzahl muss mindesten Null und darf höchstens 100 sein.");
                 }
             }
+        }
+
+        private void selectedStudentModifyButton_Click(object sender, RoutedEventArgs e)
+        {
         }
     }
 }
