@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -23,6 +24,7 @@ namespace GradeCalculatorDesktop
         private TextBox[] allTextBoxes;
         private bool oralEnabled = false;
         private string previouslyOpenedFile;
+        private int? selectedSpecialtyId;
 
         public MainWindow()
         {
@@ -53,6 +55,19 @@ namespace GradeCalculatorDesktop
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             selectedSpecialty = specialtyFilter.SelectedItem as Specialty;
+            selectedSpecialtyId = selectedSpecialty.specialtyId;
+            if (addedStudents != null)
+            {
+                IEnumerable<Student>studentsOfSpecialty = addedStudents.Where(student => student.specialty == selectedSpecialtyId);
+                //todo: keep former students somewhere
+                addedStudents = new ObservableCollection<Student>();
+                foreach (Student student in studentsOfSpecialty)
+                {
+                    addedStudents.Add(student);
+                }               
+                
+            }
+            studentTable.ItemsSource = addedStudents;
         }
 
         private void addStudent(object sender, RoutedEventArgs e)
@@ -114,12 +129,28 @@ namespace GradeCalculatorDesktop
                             Student? student = JsonSerializer.Deserialize<Student>(jsonStudent);
 
                             if (addedStudents != null && student != null)
-                            { addedStudents.Add(student); }
+                            {
+                                if (selectedSpecialtyId != null && student.specialty == selectedSpecialtyId)
+                                { addedStudents.Add(student); }
+                                else
+                                {
+                                    addedStudents.Add(student);
+                                }
+                            }
                             else if (student != null)
                             {
-                                addedStudents = new ObservableCollection<Student>();
-                                studentTable.ItemsSource = addedStudents;
-                                addedStudents.Add(student);
+                                if (selectedSpecialtyId != null && student.specialty == selectedSpecialtyId)
+                                {
+                                    addedStudents = new ObservableCollection<Student>();
+                                    studentTable.ItemsSource = addedStudents;
+                                    addedStudents.Add(student);
+                                }
+                                else
+                                {
+                                    addedStudents = new ObservableCollection<Student>();
+                                    studentTable.ItemsSource = addedStudents;
+                                    addedStudents.Add(student);
+                                }
                             }
                         }
                     }
@@ -261,7 +292,7 @@ namespace GradeCalculatorDesktop
         public void writeMarkToLabel(int percentage, string textBoxName)
         {
             int grade = Calculations.calculateGrade(percentage);
-            if (tb.Text != string.Empty && percentage > 0 && percentage <= 100)
+            if (percentage > 0 && percentage <= 100)
             {
                 switch (textBoxName)
                 {
