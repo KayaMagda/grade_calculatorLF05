@@ -333,6 +333,7 @@ namespace GradeCalculatorDesktop
                 MessageBox.Show("Diese Punktzahl befindet sich nicht im Bereich 0-100.");
             }
         }
+        //todo: write methods to calculate all the different totals and decide where to call
 
         //opens a .prf file to save a Student into
         public async void saveStudent(object sender, RoutedEventArgs e)
@@ -384,9 +385,6 @@ namespace GradeCalculatorDesktop
                 }
             }
         }
-
-        //adds a new oneStudentRow to the studentTable
-        //public addStudentRow
 
         //validatesInputs into Grade Fields
         public void onlyNumbersAllowed(object sender, TextCompositionEventArgs e)
