@@ -26,9 +26,5 @@
                 return 1;
             }
         }
-        public static int calculateTotalPointsForProject(int first, int second)
-        {
-            return (first + second) / 2;
-        }
-    }
+        
 }

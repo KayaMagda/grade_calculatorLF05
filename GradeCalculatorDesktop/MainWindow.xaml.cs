@@ -436,9 +436,12 @@ namespace GradeCalculatorDesktop
             }
         }
 
-        private void totalProjectPart(int percent)
+        private void totalProjectPart(int percentProject, int percentPresentation)
         {
-
+            int total = (percentProject + percentPresentation) / 2;
+            student_Project_Total_Procent.Content = total.ToString();
+            int grade = Calculations.calculateGrade(total);
+            student_Project_Total_Mark.Content = grade.ToString();
         }
         private void totalPartTwo(int percent)
         {
