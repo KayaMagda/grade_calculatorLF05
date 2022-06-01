@@ -113,7 +113,7 @@
             <Canvas/>
         </Button>
         <Viewbox Width="48" Height="48"/>
-        <Button Content="Speichern" Grid.Column="2" Width="75" Height="30" HorizontalAlignment="Right" Margin="0,397,42,0" Grid.Row="2" VerticalAlignment="Top" Click="saveStudent">
+        <Button x:Name="saveButton" Content="Speichern" Grid.Column="2" Width="75" Height="30" HorizontalAlignment="Right" Margin="0,397,42,0" Grid.Row="2" VerticalAlignment="Top" Click="saveStudent">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="5" />

@@ -57,12 +57,12 @@ namespace GradeCalculatorDesktop
         {
             TextBox tb = sender as TextBox;
 
-            Regex regex = new Regex(@"^\p{L}+$");
+            Regex regex = new Regex(@"^[\p{L}-]+$");
             bool isAlphabetical = regex.IsMatch(e.Text);
             if (!isAlphabetical)
             {
                 MessageBox.Show("Bitte nur Buchstaben eingeben.");
-                
+                e.Handled = true;
             }
             if (tb.Text.Length > 1)
             {
