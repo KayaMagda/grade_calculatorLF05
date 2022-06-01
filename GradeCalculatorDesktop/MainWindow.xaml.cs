@@ -39,6 +39,7 @@ namespace GradeCalculatorDesktop
                 new Specialty(3, "Fachinformatiker_in/ Anwendungsentwicklung", new string[] { "Planen und Umsetzen eines Softwareprojektes", "Planen eines Softwareproduktes", "Entwicklung und Umsetzung von Algorithmen"}),
                 new Specialty(4, "Fachinformatiker_in/ Systemintegration", new string[] { "Planen und Umsetzen eines Projektes der Systemintegration", "Konzeption und Administration von IT-Systemen", "Analyse und Entwicklung von Netzwerken"}),
                 new Specialty(5, "Fachinformatiker_in/ Digitale Vernetzung", new string[] { "Planen und Durchführen eines Projektes der Datenanalyse", "Durchführen einer Prozessanalyse", "Sicherstellen der Datenqualität"}),
+                new Specialty(6, "Keine Auswahl", new string[] {"Projekt", "Theorie 1", "Theorie 2"}),
              };
             specialtyFilter.Items.Clear();
             specialtyFilter.ItemsSource = specialtys;
@@ -54,20 +55,32 @@ namespace GradeCalculatorDesktop
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Student[] copyForSelection = null;
             selectedSpecialty = specialtyFilter.SelectedItem as Specialty;
             selectedSpecialtyId = selectedSpecialty.specialtyId;
+            ObservableCollection<Student> observableStudentsOfSpecialty = new ObservableCollection<Student>();
             if (addedStudents != null)
             {
-                IEnumerable<Student>studentsOfSpecialty = addedStudents.Where(student => student.specialty == selectedSpecialtyId);
-                //todo: keep former students somewhere
-                addedStudents = new ObservableCollection<Student>();
-                foreach (Student student in studentsOfSpecialty)
+                if (selectedSpecialtyId != 6)
                 {
-                    addedStudents.Add(student);
-                }               
-                
+                    copyForSelection = new Student[addedStudents.Count];
+                    addedStudents.CopyTo(copyForSelection, 0);
+                    IEnumerable<Student> studentsOfSpecialty = copyForSelection.Where(student => student.specialty == selectedSpecialtyId);
+                    foreach (Student student in studentsOfSpecialty)
+                    {
+                        observableStudentsOfSpecialty.Add(student);
+                    }
+                }
+                studentTable.ItemsSource = observableStudentsOfSpecialty;
             }
-            studentTable.ItemsSource = addedStudents;
+            else
+            {
+                if (copyForSelection != null)
+                {
+                    studentTable.Items.Clear();
+                    studentTable.ItemsSource = addedStudents;
+                }
+            }
         }
 
         private void addStudent(object sender, RoutedEventArgs e)
@@ -95,25 +108,24 @@ namespace GradeCalculatorDesktop
         //opens a .prf file to read Students from
         public void readStudentsFromFile(object sender, RoutedEventArgs e)
         {
-            string filePath = "";
-            if (filePath == previouslyOpenedFile)
-            {
-                MessageBox.Show("Diese Daten wurden bereits geladen.");
-            }
-            else
-            {
-                previouslyOpenedFile = filePath;
-                OpenFileDialog chooseFile = new OpenFileDialog();
-                chooseFile.Title = "Datei wählen.";
-                chooseFile.InitialDirectory = @"C:\";
-                chooseFile.RestoreDirectory = true;
-                chooseFile.Filter = "prf files (*.prf)|*.prf|All files (*.*)|*.*";
-                chooseFile.FilterIndex = 0;
-                chooseFile.DefaultExt = "prf";
+            OpenFileDialog chooseFile = new OpenFileDialog();
+            chooseFile.Title = "Datei wählen.";
+            chooseFile.InitialDirectory = @"C:\";
+            chooseFile.RestoreDirectory = true;
+            chooseFile.Filter = "prf files (*.prf)|*.prf|All files (*.*)|*.*";
+            chooseFile.FilterIndex = 0;
+            chooseFile.DefaultExt = "prf";
 
-                if ((bool)chooseFile.ShowDialog())
+            if ((bool)chooseFile.ShowDialog())
+            {
+                string filePath = chooseFile.FileName;
+                if (filePath == previouslyOpenedFile)
                 {
-                    filePath = chooseFile.FileName;
+                    MessageBox.Show("Diese Daten wurden bereits geladen.");
+                }
+                else
+                {
+                    previouslyOpenedFile = filePath;
                     string fileContent = File.ReadAllText(filePath);
                     string[] toRemove = new string[] { "\r", "\n" };
                     foreach (string charToRemove in toRemove)
@@ -333,6 +345,7 @@ namespace GradeCalculatorDesktop
                 MessageBox.Show("Diese Punktzahl befindet sich nicht im Bereich 0-100.");
             }
         }
+
         //todo: write methods to calculate all the different totals and decide where to call
 
         //opens a .prf file to save a Student into
@@ -361,28 +374,35 @@ namespace GradeCalculatorDesktop
                 }
                 string compareString = studentString.Substring(0, 21);
 
-                string[] asStudents = fileContent.Split(';');
-
-                foreach (string savedStudent in asStudents)
+                if (fileContent != null)
                 {
-                    if (savedStudent != string.Empty)
+                    string[] asStudents = fileContent.Split(';');
+
+                    foreach (string savedStudent in asStudents)
                     {
-                        if (savedStudent.Contains(compareString))
+                        if (savedStudent != string.Empty)
                         {
-                            fileContent = fileContent.Replace(savedStudent, studentString);
-                            await using (StreamWriter writer = new StreamWriter(filePath))
+                            if (savedStudent.Contains(compareString))
                             {
-                                writer.WriteLine(fileContent);
+                                fileContent = fileContent.Replace(savedStudent, studentString);
+                                await using (StreamWriter writer = new StreamWriter(filePath))
+                                {
+                                    writer.WriteLine(fileContent);
+                                }
+                                MessageBox.Show("Prüflingsdaten wurden gespeichert.");
                             }
-                            MessageBox.Show("Prüflingsdaten wurden gespeichert.");
-                        }
-                        else
-                        {
-                            Student.serializeStudentAsync(focusedStudent, filePath);
-                            MessageBox.Show("Prüflingsdaten wurden gespeichert.");
+                            else
+                            {
+                                Student.serializeStudentAsync(focusedStudent, filePath);
+                                MessageBox.Show("Prüflingsdaten wurden gespeichert.");
+                            }
                         }
                     }
                 }
+            } else
+            {
+                Student.serializeStudentAsync(focusedStudent, filePath);
+                MessageBox.Show("Prüflingsdaten wurden gespeichert.");
             }
         }
 

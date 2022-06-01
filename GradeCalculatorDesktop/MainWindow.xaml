@@ -17,14 +17,14 @@
             </Style>
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="460" />
+            <RowDefinition Height="60*" />
+            <RowDefinition Height="30*" />
+            <RowDefinition Height="460*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="328" />
-            <ColumnDefinition Width="316" />
-            <ColumnDefinition Width="195"/>
+            <ColumnDefinition Width="328*" />
+            <ColumnDefinition Width="316*" />
+            <ColumnDefinition Width="195*"/>
         </Grid.ColumnDefinitions>
         <ComboBox x:Name="specialtyFilter" FontSize="15" Width="230" Margin="10,0,0,0" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" SelectionChanged="ComboBox_SelectionChanged">
             <ComboBox.Resources>
