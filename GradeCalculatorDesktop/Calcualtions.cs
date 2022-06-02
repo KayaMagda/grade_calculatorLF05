@@ -9,22 +9,27 @@
             if (points >= 0 && points <= 29)
             {
                 return 6;
-            } else if (points >= 30 && points <= 49)
+            }
+            else if (points >= 30 && points <= 49)
             {
                 return 5;
-            } else if (points >= 50 && points <= 66)
+            }
+            else if (points >= 50 && points <= 66)
             {
                 return 4;
-            } else if (points >= 67 && points <= 80)
+            }
+            else if (points >= 67 && points <= 80)
             {
                 return 3;
-            } else if (points >= 81 && points <= 91)
+            }
+            else if (points >= 81 && points <= 91)
             {
                 return 2;
-            } else
+            }
+            else
             {
                 return 1;
             }
         }
-        
+    }     
 }

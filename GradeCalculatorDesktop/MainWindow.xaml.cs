@@ -17,12 +17,12 @@ namespace GradeCalculatorDesktop
     public partial class MainWindow : Window
     {
         private Student? focusedStudent;
-        private bool studentWasFocused = false;
         private GradeData? gradeData;
         private ObservableCollection<Student>? addedStudents;
         private List<Specialty> specialtys;
         private Specialty? selectedSpecialty;
         private TextBox[] allTextBoxes;
+        private Label[] allFocusedLabels;
         private bool oralEnabled = false;
         private string previouslyOpenedFile;
         private int? selectedSpecialtyId;
@@ -46,9 +46,10 @@ namespace GradeCalculatorDesktop
             specialtyFilter.ItemsSource = specialtys;
             specialtyFilter.DisplayMemberPath = "specialtyName";
             allTextBoxes = new TextBox[] { student_AP_Teil_1_Procent, student_Project_Procent, student_Presentation_Procent, student_Theory1_Procent, student_Theory2_Procent, student_Economy_Procent, student_Verbal_Procent };
+            allFocusedLabels = new Label[] { student_Project_Total_Procent, student_Result_Procent, student_Total_Procent, student_AP_Teil_1_Mark, student_Project_Mark, student_Presentation_Mark, student_Project_Total_Mark, student_Theory1_Mark, student_Theory2_Mark, student_Economy_Mark, student_Verbal_Mark, student_Result_Mark, student_Total_Mark, grade_As_Word };
             student_Verbal_Procent.IsEnabled = oralEnabled;
-            saveButton.IsEnabled = studentWasFocused;
-            
+            saveButton.IsEnabled = false;
+
             foreach (TextBox box in allTextBoxes)
             {
                 box.IsEnabled = false;
@@ -77,11 +78,9 @@ namespace GradeCalculatorDesktop
                 }
                 else
                 {
-                    if (copyForSelection != null)
-                    {
-                        studentTable.Items.Clear();
+                    
                         studentTable.ItemsSource = addedStudents;
-                    }
+                    
                 }
             }
         }
@@ -99,11 +98,13 @@ namespace GradeCalculatorDesktop
                 {
                     addedStudents.Add(ownedAddStudent.student);
                     studentTable.ItemsSource = addedStudents;
+                    saveButton.IsEnabled = true;
                 }
                 else if (ownedAddStudent.student != null)
                 {
                     addedStudents = new ObservableCollection<Student> { ownedAddStudent.student };
                     studentTable.ItemsSource = addedStudents;
+                    saveButton.IsEnabled = true;
                 }
             }
         }
@@ -122,10 +123,11 @@ namespace GradeCalculatorDesktop
             if ((bool)chooseFile.ShowDialog())
             {
                 string filePath = chooseFile.FileName;
+                MessageBoxResult result = MessageBoxResult.Cancel;
                 if (filePath == previouslyOpenedFile)
                 {
-                    MessageBox.Show("Diese Daten wurden bereits geladen.");
-                }
+                   result = MessageBox.Show("Diese Daten wurden bereits geladen. Möchtest du sie neu laden?", "Daten neu laden.", MessageBoxButton.YesNoCancel);
+                }               
                 else
                 {
                     previouslyOpenedFile = filePath;
@@ -137,6 +139,10 @@ namespace GradeCalculatorDesktop
                     }
 
                     string[] asStudents = fileContent.Split(';');
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        addedStudents = new ObservableCollection<Student>();
+                    }
                     foreach (string jsonStudent in asStudents)
                     {
                         if (jsonStudent != string.Empty)
@@ -147,7 +153,7 @@ namespace GradeCalculatorDesktop
                             {
                                 if (selectedSpecialtyId != null && student.specialty == selectedSpecialtyId)
                                 {
-                                    addedStudents.Add(student);
+                                   addedStudents.Add(student);
                                 }
                                 else
                                 {
@@ -169,6 +175,8 @@ namespace GradeCalculatorDesktop
                                     addedStudents.Add(student);
                                 }
                             }
+                            saveButton.IsEnabled = true;
+
                         }
                     }
                 }
@@ -202,6 +210,10 @@ namespace GradeCalculatorDesktop
                         if (gradeData.percentagePB1 != null)
                         {
                             student_AP_Teil_1_Procent.Text = gradeData.percentagePB1;
+                        }
+                        else
+                        {
+                            student_AP_Teil_1_Procent.Text = "";
                         }
                         if (gradeData.percentageProject != null)
                         {
@@ -245,16 +257,25 @@ namespace GradeCalculatorDesktop
                     {
                         gradeData = new GradeData();
                         focusedStudent.gradeData = gradeData;
+                        foreach (TextBox box in allTextBoxes)
+                        {
+                            box.Text = "";
+                        }
+                        foreach (Label label in allFocusedLabels)
+                        {
+                            label.Content = "-";
+                        }
                     }
                 }
             }
-            studentWasFocused = true;
+            saveButton.IsEnabled = true;
         }
 
         public void writeMarkToLabel(object sender, RoutedEventArgs e)
         {
             TextBox tb = sender as TextBox;
-            int asNumber = int.Parse(tb.Text);
+            bool isNumber = int.TryParse(tb.Text, out int asNumber);
+            if (isNumber == true) { 
             if (tb.Text != string.Empty && asNumber > 0 && asNumber <= 100)
             {
                 int percentage = int.Parse(tb.Text);
@@ -305,6 +326,7 @@ namespace GradeCalculatorDesktop
                 MessageBox.Show("Bitte gib nur Punktzahlen zwischen 0 und 100 ein.");
                 tb.Text = string.Empty;
             }
+            }
         }
 
         public void writeMarkToLabel(int percentage, string textBoxName)
@@ -353,8 +375,79 @@ namespace GradeCalculatorDesktop
         }
 
         //todo: write methods to calculate all the different totals and decide where to call
+        //deletes the focused Student from List and, if file was chosen from file, too
+        public void removeStudent(object sender, RoutedEventArgs e)
+        {
+            ObservableCollection<Student> students = new ObservableCollection<Student>();
+            foreach (Student student in addedStudents)
+            {
+                if (student.studentId != focusedStudent.studentId)
+                {
+                    students.Add(student);                   
+                }
+            }
+            foreach (TextBox box in allTextBoxes)
+            {
+                box.Text = "";
+            }
+            foreach (Label label in allFocusedLabels)
+            {
+                label.Content = "-";
+            }
+            selectedStudentName.Content = "";
+            addedStudents = students;
+            studentTable.ItemsSource = addedStudents;
+        }
 
-        //opens a .prf file to save a Student into
+        //opens a .prf file to save a List of students
+        public async void saveList(object sender, RoutedEventArgs e)
+        {
+            string filePath = "";
+            string listString = "";
+
+            OpenFileDialog chooseFile = new OpenFileDialog();
+            chooseFile.Title = "Datei wählen.";
+            chooseFile.InitialDirectory = @"C:\";
+            chooseFile.RestoreDirectory = true;
+            chooseFile.Filter = "prf files (*.prf)|*.prf|All files (*.*)|*.*";
+            chooseFile.FilterIndex = 0;
+            chooseFile.DefaultExt = "prf";
+
+            if ((bool)chooseFile.ShowDialog())
+            {
+                filePath = chooseFile.FileName;
+                if (addedStudents.Count != 0)
+                {
+                    foreach (Student student in addedStudents)
+                    {
+                        string studentString = JsonSerializer.Serialize(student);
+                        listString += studentString;
+                        listString += ";";
+                    }
+                    string[] toRemove = new string[] { "\r", "\n" };
+                    foreach (string charToRemove in toRemove)
+                    {
+                        listString = listString.Replace(charToRemove, string.Empty);
+                    }
+                    await using (StreamWriter writer = new StreamWriter(filePath))
+                    {
+                        writer.WriteLine(listString);
+                    }
+                    MessageBox.Show("Prüflingsdaten wurden gespeichert.");
+                } 
+                else
+                {
+                    await using (StreamWriter writer = new StreamWriter(filePath))
+                    {
+                        writer.WriteLine(listString);
+                    }
+                    MessageBox.Show("Prüflingsdaten wurden gespeichert.");
+                }
+              
+            }
+        }
+
+        //opens a .prf file to save a single Student into
         public async void saveStudent(object sender, RoutedEventArgs e)
         {
             string filePath = "";
@@ -443,14 +536,13 @@ namespace GradeCalculatorDesktop
             int grade = Calculations.calculateGrade(total);
             student_Project_Total_Mark.Content = grade.ToString();
         }
+
         private void totalPartTwo(int percent)
         {
-
         }
 
         private void enableOralAssessment()
         {
-
         }
 
         private void selectedStudentModifyButton_Click(object sender, RoutedEventArgs e)

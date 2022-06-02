@@ -57,7 +57,7 @@ namespace GradeCalculatorDesktop
         {
             TextBox tb = sender as TextBox;
 
-            Regex regex = new Regex(@"^[\p{L}-]+$");
+            Regex regex = new Regex(@"^[\p{L}- ]+$");
             bool isAlphabetical = regex.IsMatch(e.Text);
             if (!isAlphabetical)
             {
@@ -107,13 +107,7 @@ namespace GradeCalculatorDesktop
             if (e.Key == Key.Space)
                 e.Handled = false;
         }
-
-        private void spaceAllowed(object sender, KeyEventArgs e)
-        {
-            // Prohibit space
-            if (e.Key == Key.Space)
-                e.Handled = true;
-        }
+       
 
         private void saveStudent(object sender, RoutedEventArgs e)
         {

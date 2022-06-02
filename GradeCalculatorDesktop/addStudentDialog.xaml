@@ -43,10 +43,10 @@
         <TextBox Name="studentNumber" Grid.Column="1" Grid.Row="0" PreviewTextInput="onlyNumbersAllowed" PreviewKeyDown="noSpaceAllowed" MaxLength="7"/>
 
         <Label Grid.Column="0" Grid.Row="1">Nachname:</Label>
-        <TextBox Name="lastName" Grid.Column="1" Grid.Row="1" PreviewTextInput="noNumbersAllowed" PreviewKeyDown="spaceAllowed"/>
+        <TextBox Name="lastName" Grid.Column="1" Grid.Row="1" PreviewTextInput="noNumbersAllowed"/>
 
         <Label Grid.Column="0" Grid.Row="2">Vorname:</Label>
-        <TextBox Name="firstName" Grid.Column="1" Grid.Row="2" PreviewTextInput="noNumbersAllowed" PreviewKeyDown="spaceAllowed"/>
+        <TextBox Name="firstName" Grid.Column="1" Grid.Row="2" PreviewTextInput="noNumbersAllowed"/>
 
         <Label Grid.Column="0" Grid.Row="3">Fachbereich:</Label>
         <ComboBox Name="studentSpecialty" Grid.Column="1" Grid.Row="3" SelectionChanged="ComboBox_SelectionChanged"/>
