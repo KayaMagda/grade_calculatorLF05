@@ -32,7 +32,6 @@
                     <Setter Property="CornerRadius" Value="5" />
                 </Style>
             </ComboBox.Resources>
-            <ComboBoxItem x:Name="specialtyFilterItem" Height="30" Content="test" VerticalAlignment="Center" Background="#ecf0f1" />
         </ComboBox>
 
         <Button x:Name="fromFile" Grid.Column="0" Width="30" Height="30" Margin="250,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Click="readStudentsFromFile">
@@ -130,9 +129,12 @@
         <Label x:Name="variableAssessmentOne" Content="Theorie 1" Grid.Column="1" HorizontalAlignment="Left" Margin="30,170,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="276" />
         <Label x:Name="variableAssessmentTwo" Content="Theorie 2" Grid.Column="1" HorizontalAlignment="Left" Margin="30,200,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="276" />
         <Label x:Name="standardEconomyAssessment" Content="Wirtschaft und Sozialkunde" Grid.Column="1" HorizontalAlignment="Left" Margin="30,230,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="155" />
-        <Label x:Name="oralAssessment" Content="Mündliche Zusatzprüfung" Grid.Column="1" HorizontalAlignment="Left" Margin="30,260,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="146" />
-        <Label x:Name="markPartTwo" Content="Ergebnis Teil 2" Grid.Column="1" HorizontalAlignment="Left" Margin="20,300,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="86" />
-        <Label x:Name="wholeMark" Content="Gesamt" Grid.Column="1" HorizontalAlignment="Left" Margin="20,330,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="50" />
+        <Label x:Name="oralAssessmentLabel" Content="Mündliche Zusatzprüfung" Grid.Column="1" HorizontalAlignment="Left" Margin="30,260,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="146" />
+        <ComboBox x:Name="oralAssessment" Grid.Column="1" HorizontalAlignment="Left" Margin="35,284,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="Black" Height="26" Width="146" ToolTip="In welchem Prüfungsbereich wurde die mündliche Zusatzprüfung abgehalten?" SelectionChanged="oralAssessmentEnabler" >
+           
+        </ComboBox>
+        <Label x:Name="markPartTwo" Content="Ergebnis Teil 2" Grid.Column="1" HorizontalAlignment="Left" Margin="21,325,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="86" />
+        <Label x:Name="wholeMark" Content="Gesamt" Grid.Column="1" HorizontalAlignment="Left" Margin="20,368,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="50" />
 
         <TextBox LostFocus="writeMarkToLabel" PreviewTextInput="onlyNumbersAllowed" BorderThickness="0" x:Name="student_AP_Teil_1_Procent"  Grid.Column="2" HorizontalAlignment="Left" Margin="3,10,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" Height="16" />
         <TextBox LostFocus="writeMarkToLabel" PreviewTextInput="onlyNumbersAllowed" BorderThickness="0" x:Name="student_Project_Procent"  Grid.Column="2" HorizontalAlignment="Left" Margin="3,80,0,0" Grid.Row="2" VerticalAlignment="Top" Width="30" Height="16" />
@@ -141,9 +143,9 @@
         <TextBox LostFocus="writeMarkToLabel" PreviewTextInput="onlyNumbersAllowed" BorderThickness="0" x:Name="student_Theory1_Procent"  Grid.Column="2" HorizontalAlignment="Left" Margin="3,170,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" Height="16" />
         <TextBox LostFocus="writeMarkToLabel" PreviewTextInput="onlyNumbersAllowed" BorderThickness="0" x:Name="student_Theory2_Procent"  Grid.Column="2" HorizontalAlignment="Left" Margin="3,200,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" Height="16" />
         <TextBox LostFocus="writeMarkToLabel" PreviewTextInput="onlyNumbersAllowed" BorderThickness="0" x:Name="student_Economy_Procent"  Grid.Column="2" HorizontalAlignment="Left" Margin="3,230,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" Height="16" />
-        <TextBox LostFocus="writeMarkToLabel" PreviewTextInput="onlyNumbersAllowed" BorderThickness="0" x:Name="student_Verbal_Procent"  Grid.Column="2" HorizontalAlignment="Left" Margin="3,260,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" Height="16" />
-        <Label Foreground="AliceBlue" Content="  -" BorderThickness="0" x:Name="student_Result_Procent"  Grid.Column="2" HorizontalAlignment="Left" Margin="3,300,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" Height="26" />
-        <Label Foreground="AliceBlue" Content="  -" BorderThickness="0" x:Name="student_Total_Procent"  Grid.Column="2" HorizontalAlignment="Left" Margin="3,330,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" Height="26" />
+        <TextBox LostFocus="calcWithOralAssessment"  PreviewTextInput="onlyNumbersAllowed" BorderThickness="0" x:Name="student_Verbal_Procent"  Grid.Column="2" HorizontalAlignment="Left" Margin="3,260,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" Height="16" />
+        <Label Foreground="AliceBlue" Content="  -" BorderThickness="0" x:Name="student_Result_Procent"  Grid.Column="2" HorizontalAlignment="Left" Margin="3,325,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" Height="26" />
+        <Label Foreground="AliceBlue" Content="  -" BorderThickness="0" x:Name="student_Total_Procent"  Grid.Column="2" HorizontalAlignment="Left" Margin="3,363,0,0" Grid.Row="2" VerticalAlignment="Top"  Width="30" Height="26" />
 
         <Label x:Name="student_AP_Teil_1_Mark" Content="-" Grid.Column="2" HorizontalAlignment="Left" Margin="84,10,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="32" />
         <Label x:Name="student_Project_Mark" Content="-" Grid.Column="2" HorizontalAlignment="Left" Margin="84,80,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="32" />
@@ -153,8 +155,8 @@
         <Label x:Name="student_Theory2_Mark" Content="-" Grid.Column="2" HorizontalAlignment="Left" Margin="84,200,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="32" />
         <Label x:Name="student_Economy_Mark" Content="-" Grid.Column="2" HorizontalAlignment="Left" Margin="84,230,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="32" />
         <Label x:Name="student_Verbal_Mark" Content="-" Grid.Column="2" HorizontalAlignment="Left" Margin="84,260,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="32" />
-        <Label x:Name="student_Result_Mark" Content="-" Grid.Column="2" HorizontalAlignment="Left" Margin="84,300,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="32" />
-        <Label x:Name="student_Total_Mark" Content="-" Grid.Column="2" HorizontalAlignment="Left" Margin="84,330,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="32" />
+        <Label x:Name="student_Result_Mark" Content="-" Grid.Column="2" HorizontalAlignment="Left" Margin="84,325,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="32" />
+        <Label x:Name="student_Total_Mark" Content="-" Grid.Column="2" HorizontalAlignment="Left" Margin="84,368,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="AliceBlue" Height="26" Width="32" />
         <Label x:Name="grade_As_Word" Content="" Grid.Column="2" HorizontalAlignment="Left" Margin="79,407,0,0" Grid.Row="2" VerticalAlignment="Top" Foreground="#2ecc71" Height="26" Width="75" RenderTransformOrigin="0.123,0.694" />
         <Canvas RenderTransformOrigin="10.812,0.813" Grid.Column="2" Margin="24,16,147,20"/>
         <Path Fill="AliceBlue" Data="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="2" Margin="53,18,0,0" Height="21" Width="21" />

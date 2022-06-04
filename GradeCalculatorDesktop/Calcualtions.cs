@@ -31,5 +31,9 @@
                 return 1;
             }
         }
+        public static int newPercentage(int formerPercentage, int oralAssessement)
+        {
+            return ((formerPercentage * 2) + oralAssessement) / 3;
+        }
     }     
 }

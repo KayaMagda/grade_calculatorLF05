@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -26,6 +27,7 @@ namespace GradeCalculatorDesktop
         private bool oralEnabled = false;
         private string previouslyOpenedFile;
         private int? selectedSpecialtyId;
+        private ObservableCollection<NameAndValueStructure> forOralAssessment;
 
         public MainWindow()
         {
@@ -45,6 +47,12 @@ namespace GradeCalculatorDesktop
             specialtyFilter.Items.Clear();
             specialtyFilter.ItemsSource = specialtys;
             specialtyFilter.DisplayMemberPath = "specialtyName";
+            forOralAssessment = new ObservableCollection<NameAndValueStructure>();
+            NameAndValueStructure initial = new NameAndValueStructure() { name = "", value = "Keine Schülerdaten vorhanden", percentage = 0 };
+            forOralAssessment.Add(initial);
+            oralAssessment.ItemsSource = forOralAssessment;
+            oralAssessment.DisplayMemberPath = "value";
+            oralAssessment.SelectedValuePath = "name";
             allTextBoxes = new TextBox[] { student_AP_Teil_1_Procent, student_Project_Procent, student_Presentation_Procent, student_Theory1_Procent, student_Theory2_Procent, student_Economy_Procent, student_Verbal_Procent };
             allFocusedLabels = new Label[] { student_Project_Total_Procent, student_Result_Procent, student_Total_Procent, student_AP_Teil_1_Mark, student_Project_Mark, student_Presentation_Mark, student_Project_Total_Mark, student_Theory1_Mark, student_Theory2_Mark, student_Economy_Mark, student_Verbal_Mark, student_Result_Mark, student_Total_Mark, grade_As_Word };
             student_Verbal_Procent.IsEnabled = oralEnabled;
@@ -78,9 +86,7 @@ namespace GradeCalculatorDesktop
                 }
                 else
                 {
-                    
-                        studentTable.ItemsSource = addedStudents;
-                    
+                    studentTable.ItemsSource = addedStudents;
                 }
             }
         }
@@ -126,8 +132,8 @@ namespace GradeCalculatorDesktop
                 MessageBoxResult result = MessageBoxResult.Cancel;
                 if (filePath == previouslyOpenedFile)
                 {
-                   result = MessageBox.Show("Diese Daten wurden bereits geladen. Möchtest du sie neu laden?", "Daten neu laden.", MessageBoxButton.YesNoCancel);
-                }               
+                    result = MessageBox.Show("Diese Daten wurden bereits geladen. Möchtest du sie neu laden?", "Daten neu laden.", MessageBoxButton.YesNoCancel);
+                }
                 else
                 {
                     previouslyOpenedFile = filePath;
@@ -153,7 +159,7 @@ namespace GradeCalculatorDesktop
                             {
                                 if (selectedSpecialtyId != null && student.specialty == selectedSpecialtyId)
                                 {
-                                   addedStudents.Add(student);
+                                    addedStudents.Add(student);
                                 }
                                 else
                                 {
@@ -176,7 +182,6 @@ namespace GradeCalculatorDesktop
                                 }
                             }
                             saveButton.IsEnabled = true;
-
                         }
                     }
                 }
@@ -187,6 +192,7 @@ namespace GradeCalculatorDesktop
         {
             if (studentTable.SelectedItem != null)
             {
+                forOralAssessment = new ObservableCollection<NameAndValueStructure>();
                 focusedStudent = studentTable.SelectedValue as Student;
                 foreach (TextBox box in allTextBoxes)
                 {
@@ -211,10 +217,6 @@ namespace GradeCalculatorDesktop
                         {
                             student_AP_Teil_1_Procent.Text = gradeData.percentagePB1;
                         }
-                        else
-                        {
-                            student_AP_Teil_1_Procent.Text = "";
-                        }
                         if (gradeData.percentageProject != null)
                         {
                             student_Project_Procent.Text = gradeData.percentageProject;
@@ -223,17 +225,50 @@ namespace GradeCalculatorDesktop
                         {
                             student_Presentation_Procent.Text = gradeData.percentagePresentation;
                         }
-                        if (gradeData.percentageVariableOne != null)
+                        if (gradeData.percentageVariableOne != null && gradeData.percentageVariableOne != "")
                         {
                             student_Theory1_Procent.Text = gradeData.percentageVariableOne;
+                            int grade = Calculations.calculateGrade(int.Parse(gradeData.percentageVariableOne));
+                            if (grade >= 5)
+                            {
+                                NameAndValueStructure nameAndValueStructure = new NameAndValueStructure()
+                                {
+                                    name = student_Theory1_Procent.Name,
+                                    value = assessmentNames[1],
+                                    percentage = int.Parse(gradeData.percentageVariableOne)
+                                };
+                                forOralAssessment.Add(nameAndValueStructure);
+                            }
                         }
-                        if (gradeData.percentageVariableTwo != null)
+                        if (gradeData.percentageVariableTwo != null && gradeData.percentageVariableTwo != "")
                         {
                             student_Theory2_Procent.Text = gradeData.percentageVariableTwo;
+                            int grade = Calculations.calculateGrade(int.Parse(gradeData.percentageVariableTwo));
+                            if (grade >= 5)
+                            {
+                                NameAndValueStructure nameAndValueStructure = new NameAndValueStructure()
+                                {
+                                    name = student_Theory2_Procent.Name,
+                                    value = assessmentNames[2],
+                                    percentage = int.Parse(gradeData.percentageVariableTwo)
+                                };
+                                forOralAssessment.Add(nameAndValueStructure);
+                            }
                         }
-                        if (gradeData.percentageWiSo != null)
+                        if (gradeData.percentageWiSo != null && gradeData.percentageWiSo != "")
                         {
                             student_Economy_Procent.Text = gradeData.percentageWiSo;
+                            int grade = Calculations.calculateGrade(int.Parse(gradeData.percentageWiSo));
+                            if (grade >= 5)
+                            {
+                                NameAndValueStructure nameAndValueStructure = new NameAndValueStructure()
+                                {
+                                    name = student_Economy_Procent.Name,
+                                    value = "Wirtschaft und Sozialkunde",
+                                    percentage = int.Parse(gradeData.percentageWiSo)
+                                };
+                                forOralAssessment.Add(nameAndValueStructure);
+                            }
                         }
                         if (gradeData.percentageOralAssessment != null)
                         {
@@ -267,66 +302,266 @@ namespace GradeCalculatorDesktop
                         }
                     }
                 }
+                saveButton.IsEnabled = true;
+                oralAssessment.ItemsSource = forOralAssessment;
             }
-            saveButton.IsEnabled = true;
         }
 
         public void writeMarkToLabel(object sender, RoutedEventArgs e)
         {
+            ObservableCollection<NameAndValueStructure> copyForChange = new ObservableCollection<NameAndValueStructure>();
+            bool forOralDropdownFilled = forOralAssessment.Count != 0;
+            Specialty focusedStudentSpecialty = specialtys.Find(specialty => specialty.specialtyId == focusedStudent.specialty);
+            string[] assessmentNames = focusedStudentSpecialty.specialtyVariableAssesments;
+
             TextBox tb = sender as TextBox;
             bool isNumber = int.TryParse(tb.Text, out int asNumber);
-            if (isNumber == true) { 
-            if (tb.Text != string.Empty && asNumber > 0 && asNumber <= 100)
+            if (isNumber == true)
             {
-                int percentage = int.Parse(tb.Text);
-                int grade = Calculations.calculateGrade(percentage);
+                if (tb.Text != string.Empty && asNumber > 0 && asNumber <= 100)
+                {
+                    int grade = Calculations.calculateGrade(asNumber);
+                    bool alreadyThere = false;
+                    switch (tb.Name)
+                    {
+                        case "student_AP_Teil_1_Procent":
+                            gradeData.percentagePB1 = tb.Text;
+                            student_AP_Teil_1_Mark.Content = grade;
+                            break;
+
+                        case "student_Project_Procent":
+                            gradeData.percentageProject = tb.Text;
+                            string otherPart = student_Presentation_Procent.Text;
+                            if (int.TryParse(otherPart, out int projectNumber))
+                            {
+                                totalProjectPart(asNumber, projectNumber);
+                            }
+                            else
+                            {
+                                totalProjectPart(asNumber, 0);
+                            }
+                            student_Project_Mark.Content = grade;
+                            break;
+
+                        case "student_Presentation_Procent":
+                            gradeData.percentagePresentation = tb.Text;
+                            student_Presentation_Mark.Content = grade;
+                            string projectPart = student_Project_Procent.Text;
+                            if (int.TryParse(projectPart, out int partNumber))
+                            {
+                                totalProjectPart(asNumber, partNumber);
+                            }
+                            else
+                            {
+                                totalProjectPart(asNumber, 0);
+                            }
+                            break;
+
+                        case "student_Theory1_Procent":
+                            gradeData.percentageVariableOne = tb.Text;
+                            student_Theory1_Mark.Content = grade;
+                            if (grade < 5)
+                            {
+                                if (forOralDropdownFilled)
+                                {
+                                    foreach (NameAndValueStructure option in forOralAssessment)
+                                    {
+                                        if (option.name != tb.Name)
+                                        {
+                                            copyForChange.Add(option);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                NameAndValueStructure nameAndValueStructure = new NameAndValueStructure()
+                                {
+                                    name = tb.Name,
+                                    value = assessmentNames[1],
+                                    percentage = int.Parse(gradeData.percentageVariableOne)
+                                };
+                                foreach (NameAndValueStructure option in forOralAssessment)
+                                {
+                                    if(option.name == tb.Name)
+                                    {
+                                        alreadyThere = true;
+                                    }
+                                }
+                                    
+                                if (!alreadyThere) { 
+                                forOralAssessment.Add(nameAndValueStructure);
+                                }
+                            }
+                            break;
+
+                        case "student_Theory2_Procent":
+                            gradeData.percentageVariableTwo = tb.Text;
+                            student_Theory2_Mark.Content = grade;
+                            if (grade < 5)
+                            {
+                                if (forOralDropdownFilled)
+                                {
+                                    foreach (NameAndValueStructure option in forOralAssessment)
+                                    {
+                                        if (option.name != tb.Name)
+                                        {
+                                            copyForChange.Add(option);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                NameAndValueStructure nameAndValueStructure = new NameAndValueStructure()
+                                {
+                                    name = tb.Name,
+                                    value = assessmentNames[1],
+                                    percentage = int.Parse(gradeData.percentageVariableTwo)
+                                };
+                                foreach (NameAndValueStructure option in forOralAssessment)
+                                {
+                                    if(option.name == tb.Name)
+                                    {
+                                        alreadyThere = true;
+                                    }
+                                }
+                                    
+                                if (!alreadyThere) { 
+                                forOralAssessment.Add(nameAndValueStructure);
+                                }
+                            }
+                            break;
+
+                        case "student_Economy_Procent":
+                            gradeData.percentageWiSo = tb.Text;
+                            student_Economy_Mark.Content = grade;
+                            if (grade < 5)
+                            {
+                                if (forOralDropdownFilled)
+                                {
+                                    foreach (NameAndValueStructure option in forOralAssessment)
+                                    {
+                                        if (option.name != tb.Name)
+                                        {
+                                            copyForChange.Add(option);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                NameAndValueStructure nameAndValueStructure = new NameAndValueStructure()
+                                {
+                                    name = tb.Name,
+                                    value = "Wirtschaft und Sozialkunde",
+                                    percentage = int.Parse(gradeData.percentageWiSo)
+                                };
+                                foreach (NameAndValueStructure option in forOralAssessment)
+                                {
+                                    if (option.name == tb.Name)
+                                    {
+                                        alreadyThere = true;
+                                    }
+                                }
+
+                                if (!alreadyThere)
+                                {
+                                    forOralAssessment.Add(nameAndValueStructure);
+                                }
+                            }
+                            break;
+
+                        case "student_Verbal_Procent":
+                            gradeData.percentageOralAssessment = tb.Text;
+                            student_Verbal_Mark.Content = grade;
+                            break;
+
+                        default:
+                            break;
+                    }
+                    if (copyForChange.Count != 0)
+                    {
+                        forOralAssessment.Clear();
+                        foreach (NameAndValueStructure option in copyForChange)
+                        {
+                            forOralAssessment.Add(option);
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Bitte gib nur Punktzahlen zwischen 0 und 100 ein.");
+                    tb.Text = string.Empty;
+                }
+            }
+            else if (tb.Text == "")
+            {
                 switch (tb.Name)
                 {
                     case "student_AP_Teil_1_Procent":
                         gradeData.percentagePB1 = tb.Text;
-                        student_AP_Teil_1_Mark.Content = grade;
+                        student_AP_Teil_1_Mark.Content = "-";
                         break;
 
                     case "student_Project_Procent":
                         gradeData.percentageProject = tb.Text;
-                        student_Project_Mark.Content = grade;
+                        string otherPart = student_Presentation_Procent.Text;
+                        if (int.TryParse(otherPart, out int projectNumber))
+                        {
+                            totalProjectPart(0, projectNumber);
+                        }
+                        else
+                        {
+                            student_Project_Total_Procent.Content = "-";
+                            student_Project_Total_Mark.Content = "-";
+                        }
+                        student_Project_Mark.Content = "-";
                         break;
 
                     case "student_Presentation_Procent":
                         gradeData.percentagePresentation = tb.Text;
-                        student_Presentation_Mark.Content = grade;
+                        student_Presentation_Mark.Content = "-";
+                        string projectPart = student_Project_Procent.Text;
+                        if (int.TryParse(projectPart, out int partNumber))
+                        {
+                            totalProjectPart(0, partNumber);
+                        }
+                        else
+                        {
+                            student_Project_Total_Procent.Content = "-";
+                            student_Project_Total_Mark.Content = "-";
+                        }
                         break;
 
                     case "student_Theory1_Procent":
                         gradeData.percentageVariableOne = tb.Text;
-                        student_Theory1_Mark.Content = grade;
+                        student_Theory1_Mark.Content = "-";
                         break;
 
                     case "student_Theory2_Procent":
                         gradeData.percentageVariableTwo = tb.Text;
-                        student_Theory2_Mark.Content = grade;
+                        student_Theory2_Mark.Content = "-";
                         break;
 
                     case "student_Economy_Procent":
                         gradeData.percentageWiSo = tb.Text;
-                        student_Economy_Mark.Content = grade;
+                        student_Economy_Mark.Content = "-";
                         break;
 
                     case "student_Verbal_Procent":
                         gradeData.percentageOralAssessment = tb.Text;
-                        student_Verbal_Mark.Content = grade;
+                        student_Verbal_Mark.Content = "-";
                         break;
 
                     default:
                         break;
                 }
             }
-            else
-            {
-                MessageBox.Show("Bitte gib nur Punktzahlen zwischen 0 und 100 ein.");
-                tb.Text = string.Empty;
-            }
-            }
+        }
+        public void oralAssessmentEnabler(object sender, SelectionChangedEventArgs e)
+        {
+            oralEnabled = true;
         }
 
         public void writeMarkToLabel(int percentage, string textBoxName)
@@ -342,10 +577,28 @@ namespace GradeCalculatorDesktop
 
                     case "student_Project_Procent":
                         student_Project_Mark.Content = grade;
+                        string otherPart = student_Presentation_Procent.Text;
+                        if (int.TryParse(otherPart, out int asNumber))
+                        {
+                            totalProjectPart(percentage, asNumber);
+                        }
+                        else
+                        {
+                            totalProjectPart(percentage, 0);
+                        }
                         break;
 
                     case "student_Presentation_Procent":
                         student_Presentation_Mark.Content = grade;
+                        string projectPart = student_Project_Procent.Text;
+                        if (int.TryParse(projectPart, out int partNumber))
+                        {
+                            totalProjectPart(percentage, partNumber);
+                        }
+                        else
+                        {
+                            totalProjectPart(percentage, 0);
+                        }
                         break;
 
                     case "student_Theory1_Procent":
@@ -383,7 +636,7 @@ namespace GradeCalculatorDesktop
             {
                 if (student.studentId != focusedStudent.studentId)
                 {
-                    students.Add(student);                   
+                    students.Add(student);
                 }
             }
             foreach (TextBox box in allTextBoxes)
@@ -434,7 +687,7 @@ namespace GradeCalculatorDesktop
                         writer.WriteLine(listString);
                     }
                     MessageBox.Show("Prüflingsdaten wurden gespeichert.");
-                } 
+                }
                 else
                 {
                     await using (StreamWriter writer = new StreamWriter(filePath))
@@ -443,7 +696,6 @@ namespace GradeCalculatorDesktop
                     }
                     MessageBox.Show("Prüflingsdaten wurden gespeichert.");
                 }
-              
             }
         }
 
@@ -531,9 +783,10 @@ namespace GradeCalculatorDesktop
 
         private void totalProjectPart(int percentProject, int percentPresentation)
         {
-            int total = (percentProject + percentPresentation) / 2;
-            student_Project_Total_Procent.Content = total.ToString();
-            int grade = Calculations.calculateGrade(total);
+            double total = (percentProject + percentPresentation) / 2;
+            int totalRounded = (int)Math.Round(total);
+            student_Project_Total_Procent.Content = totalRounded.ToString();
+            int grade = Calculations.calculateGrade(totalRounded);
             student_Project_Total_Mark.Content = grade.ToString();
         }
 
@@ -541,8 +794,35 @@ namespace GradeCalculatorDesktop
         {
         }
 
-        private void enableOralAssessment()
+        private void calculateTotal()
         {
+            int partOne = int.Parse(student_AP_Teil_1_Procent.Text);
+            string projectString = (string)student_Project_Total_Procent.Content;
+            int project = int.Parse(projectString);
+            int theoryOne = int.Parse(student_Theory1_Procent.Text);
+            int theoryTwo = int.Parse(student_Theory2_Procent.Text);
+            int wiPo = int.Parse(student_Economy_Procent.Text);
+
+            int total = (int)Math.Round(partOne * 0.2 + project * 0.5 + theoryOne * 0.1 + theoryTwo * 0.1 + wiPo * 0.1);
+        }
+
+        private void calcWithOralAssessment(object sender, RoutedEventArgs e)
+        {
+            string selectedSubject = (string)oralAssessment.SelectedValue;
+            TextBox tb = sender as TextBox;
+            bool isNumber = int.TryParse(tb.Text, out int percentage);
+            if (isNumber)
+            {
+                int grade = Calculations.calculateGrade(percentage);
+                student_Verbal_Mark.Content = grade;
+                foreach (TextBox box in allTextBoxes)
+                {
+                    if (box.Name == selectedSubject)
+                    {
+                        int currentPercentage = int.Parse(box.Text);
+                    }
+                }
+            }
         }
 
         private void selectedStudentModifyButton_Click(object sender, RoutedEventArgs e)
