@@ -212,7 +212,7 @@ namespace GradeCalculatorDesktop
                 {
                     selectedStudentName.Content = focusedStudent.firstName + " " + focusedStudent.lastName;
                     if (focusedStudent.gradeData != null)
-                    {//todo: else clauses erweitern um mark content
+                    {//todo: else clauses erweitern um mark content und calculate totals
                         gradeData = focusedStudent.gradeData;
                         if (gradeData.percentagePB1 != null)
                         {
