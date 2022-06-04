@@ -586,6 +586,7 @@ namespace GradeCalculatorDesktop
                         {
                             totalProjectPart(percentage, 0);
                         }
+                        totalPartTwo();
                         break;
 
                     case "student_Presentation_Procent":
@@ -599,22 +600,28 @@ namespace GradeCalculatorDesktop
                         {
                             totalProjectPart(percentage, 0);
                         }
+                        totalPartTwo();
                         break;
 
                     case "student_Theory1_Procent":
                         student_Theory1_Mark.Content = grade;
+                        totalPartTwo();
                         break;
 
                     case "student_Theory2_Procent":
                         student_Theory2_Mark.Content = grade;
+                        totalPartTwo();
                         break;
 
                     case "student_Economy_Procent":
                         student_Economy_Mark.Content = grade;
+                        totalPartTwo();
+                        calculateTotal();
                         break;
 
                     case "student_Verbal_Procent":
                         student_Verbal_Mark.Content = grade;
+                        totalPartTwo();
                         break;
 
                     default:
@@ -790,8 +797,23 @@ namespace GradeCalculatorDesktop
             student_Project_Total_Mark.Content = grade.ToString();
         }
 
-        private void totalPartTwo(int percent)
+        private void totalPartTwo()
         {
+            string projectString = (string)student_Project_Total_Procent.Content;
+            if (projectString != "-" && student_Theory1_Procent.Text != "" && student_Theory2_Procent.Text != "" && student_Economy_Procent.Text != "")
+            {
+                
+                int project = int.Parse(projectString);
+                int theoryOne = int.Parse(student_Theory1_Procent.Text);
+                int theoryTwo = int.Parse(student_Theory2_Procent.Text);
+                int wiPo = int.Parse(student_Economy_Procent.Text);
+                double forTotal = (project + theoryOne + theoryTwo + wiPo) / 4;
+                int total = (int)Math.Round(forTotal);
+                student_Result_Procent.Content = total;
+                int grade = Calculations.calculateGrade(total);
+                student_Result_Mark.Content = grade;
+            }
+
         }
 
         private void calculateTotal()
@@ -804,6 +826,11 @@ namespace GradeCalculatorDesktop
             int wiPo = int.Parse(student_Economy_Procent.Text);
 
             int total = (int)Math.Round(partOne * 0.2 + project * 0.5 + theoryOne * 0.1 + theoryTwo * 0.1 + wiPo * 0.1);
+            student_Total_Procent.Content = total;
+            int grade = Calculations.calculateGrade(total);
+            student_Total_Mark.Content = grade;
+            bool totalMarkGoodEnough = grade <= 4;
+
         }
 
         private void calcWithOralAssessment(object sender, RoutedEventArgs e)
@@ -820,6 +847,27 @@ namespace GradeCalculatorDesktop
                     if (box.Name == selectedSubject)
                     {
                         int currentPercentage = int.Parse(box.Text);
+                        int newPercentage = Calculations.newPercentage(currentPercentage, percentage);
+                        box.Text = newPercentage.ToString();
+                        int newGrade = Calculations.calculateGrade(newPercentage);
+
+                        switch (box.Name)
+                        {
+                            case "student_Theory1_Procent":
+                                student_Theory1_Mark.Content = newGrade;
+                                break;
+
+                            case "student_Theory2_Procent":
+                                student_Theory2_Mark.Content = newGrade;
+                                break;
+
+                            case "student_Economy_Procent":
+                                student_Economy_Mark.Content = newGrade;
+                                break;
+
+                            default:
+                                break;
+                        }
                     }
                 }
             }
