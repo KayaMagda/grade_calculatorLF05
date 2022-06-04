@@ -28,6 +28,7 @@ namespace GradeCalculatorDesktop
         private string previouslyOpenedFile;
         private int? selectedSpecialtyId;
         private ObservableCollection<NameAndValueStructure> forOralAssessment;
+        private List<int> allPercentages = new List<int>();
 
         public MainWindow()
         {
@@ -211,19 +212,35 @@ namespace GradeCalculatorDesktop
                 {
                     selectedStudentName.Content = focusedStudent.firstName + " " + focusedStudent.lastName;
                     if (focusedStudent.gradeData != null)
-                    {
+                    {//todo: else clauses erweitern um mark content
                         gradeData = focusedStudent.gradeData;
                         if (gradeData.percentagePB1 != null)
                         {
                             student_AP_Teil_1_Procent.Text = gradeData.percentagePB1;
+                            allPercentages.Add(1);
+                        }
+                        else
+                        {
+                            student_AP_Teil_1_Procent.Text = "";
+                            student_AP_Teil_1_Mark.Content = "-";
+                            allPercentages.Remove(1);
                         }
                         if (gradeData.percentageProject != null)
                         {
                             student_Project_Procent.Text = gradeData.percentageProject;
                         }
+                        else
+                        {
+                            student_Project_Procent.Text = "";
+                            student_Project_Mark.Content = "-";
+                        }
                         if (gradeData.percentagePresentation != null)
                         {
                             student_Presentation_Procent.Text = gradeData.percentagePresentation;
+                        }
+                        else
+                        {
+                            student_Presentation_Procent.Text = "";
                         }
                         if (gradeData.percentageVariableOne != null && gradeData.percentageVariableOne != "")
                         {
@@ -240,6 +257,10 @@ namespace GradeCalculatorDesktop
                                 forOralAssessment.Add(nameAndValueStructure);
                             }
                         }
+                        else
+                        {
+                            student_Theory1_Procent.Text = "";
+                        }
                         if (gradeData.percentageVariableTwo != null && gradeData.percentageVariableTwo != "")
                         {
                             student_Theory2_Procent.Text = gradeData.percentageVariableTwo;
@@ -254,6 +275,10 @@ namespace GradeCalculatorDesktop
                                 };
                                 forOralAssessment.Add(nameAndValueStructure);
                             }
+                        }
+                        else
+                        {
+                            student_Theory2_Procent.Text = "";
                         }
                         if (gradeData.percentageWiSo != null && gradeData.percentageWiSo != "")
                         {
@@ -270,9 +295,18 @@ namespace GradeCalculatorDesktop
                                 forOralAssessment.Add(nameAndValueStructure);
                             }
                         }
+                        else
+                        {
+                            student_Economy_Procent.Text = string.Empty;
+                        }
                         if (gradeData.percentageOralAssessment != null)
                         {
                             student_Verbal_Procent.Text = gradeData.percentageOralAssessment;
+                            calculateTotal();
+                        }
+                        else
+                        {
+                            student_Verbal_Procent.Text = "";
                         }
 
                         standardAssessmentTwo.Content = assessmentNames[0];
@@ -327,6 +361,7 @@ namespace GradeCalculatorDesktop
                         case "student_AP_Teil_1_Procent":
                             gradeData.percentagePB1 = tb.Text;
                             student_AP_Teil_1_Mark.Content = grade;
+                            allPercentages.Add(1);
                             break;
 
                         case "student_Project_Procent":
@@ -335,10 +370,12 @@ namespace GradeCalculatorDesktop
                             if (int.TryParse(otherPart, out int projectNumber))
                             {
                                 totalProjectPart(asNumber, projectNumber);
+                                allPercentages.Add(2);
                             }
                             else
                             {
                                 totalProjectPart(asNumber, 0);
+                                allPercentages.Add(2); ;
                             }
                             student_Project_Mark.Content = grade;
                             break;
@@ -350,16 +387,19 @@ namespace GradeCalculatorDesktop
                             if (int.TryParse(projectPart, out int partNumber))
                             {
                                 totalProjectPart(asNumber, partNumber);
+                                allPercentages.Add(2);
                             }
                             else
                             {
                                 totalProjectPart(asNumber, 0);
+                                allPercentages.Add(2);
                             }
                             break;
 
                         case "student_Theory1_Procent":
                             gradeData.percentageVariableOne = tb.Text;
                             student_Theory1_Mark.Content = grade;
+                            allPercentages.Add(3);
                             if (grade < 5)
                             {
                                 if (forOralDropdownFilled)
@@ -398,6 +438,7 @@ namespace GradeCalculatorDesktop
                         case "student_Theory2_Procent":
                             gradeData.percentageVariableTwo = tb.Text;
                             student_Theory2_Mark.Content = grade;
+                            allPercentages.Add(4);
                             if (grade < 5)
                             {
                                 if (forOralDropdownFilled)
@@ -436,6 +477,7 @@ namespace GradeCalculatorDesktop
                         case "student_Economy_Procent":
                             gradeData.percentageWiSo = tb.Text;
                             student_Economy_Mark.Content = grade;
+                            allPercentages.Add(5);
                             if (grade < 5)
                             {
                                 if (forOralDropdownFilled)
@@ -475,6 +517,7 @@ namespace GradeCalculatorDesktop
                         case "student_Verbal_Procent":
                             gradeData.percentageOralAssessment = tb.Text;
                             student_Verbal_Mark.Content = grade;
+                            allPercentages.Add(6);
                             break;
 
                         default:
@@ -494,6 +537,10 @@ namespace GradeCalculatorDesktop
                     MessageBox.Show("Bitte gib nur Punktzahlen zwischen 0 und 100 ein.");
                     tb.Text = string.Empty;
                 }
+                if (allPercentages.Count >= 5)
+                {
+                    calculateTotal();
+                }
             }
             else if (tb.Text == "")
             {
@@ -502,6 +549,7 @@ namespace GradeCalculatorDesktop
                     case "student_AP_Teil_1_Procent":
                         gradeData.percentagePB1 = tb.Text;
                         student_AP_Teil_1_Mark.Content = "-";
+                        allPercentages.Remove(1);
                         break;
 
                     case "student_Project_Procent":
@@ -515,6 +563,7 @@ namespace GradeCalculatorDesktop
                         {
                             student_Project_Total_Procent.Content = "-";
                             student_Project_Total_Mark.Content = "-";
+                            allPercentages.Remove(2);
                         }
                         student_Project_Mark.Content = "-";
                         break;
@@ -531,27 +580,32 @@ namespace GradeCalculatorDesktop
                         {
                             student_Project_Total_Procent.Content = "-";
                             student_Project_Total_Mark.Content = "-";
+                            allPercentages.Remove(2);
                         }
                         break;
 
                     case "student_Theory1_Procent":
                         gradeData.percentageVariableOne = tb.Text;
                         student_Theory1_Mark.Content = "-";
+                        allPercentages.Remove(3);
                         break;
 
                     case "student_Theory2_Procent":
                         gradeData.percentageVariableTwo = tb.Text;
                         student_Theory2_Mark.Content = "-";
+                        allPercentages.Remove(4);
                         break;
 
                     case "student_Economy_Procent":
                         gradeData.percentageWiSo = tb.Text;
                         student_Economy_Mark.Content = "-";
+                        allPercentages.Remove(5);
                         break;
 
                     case "student_Verbal_Procent":
                         gradeData.percentageOralAssessment = tb.Text;
                         student_Verbal_Mark.Content = "-";
+                        allPercentages.Remove(6);
                         break;
 
                     default:
@@ -616,7 +670,6 @@ namespace GradeCalculatorDesktop
                     case "student_Economy_Procent":
                         student_Economy_Mark.Content = grade;
                         totalPartTwo();
-                        calculateTotal();
                         break;
 
                     case "student_Verbal_Procent":
@@ -830,6 +883,7 @@ namespace GradeCalculatorDesktop
             int grade = Calculations.calculateGrade(total);
             student_Total_Mark.Content = grade;
             bool totalMarkGoodEnough = grade <= 4;
+            bool partTwoGoodEnough = int.Parse(student_Result_Mark.Content.ToString()) <= 4;
 
         }
 
