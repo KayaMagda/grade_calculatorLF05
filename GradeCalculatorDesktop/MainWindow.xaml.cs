@@ -195,6 +195,7 @@ namespace GradeCalculatorDesktop
             {
                 forOralAssessment = new ObservableCollection<NameAndValueStructure>();
                 focusedStudent = studentTable.SelectedValue as Student;
+                allPercentages.Clear();
                 foreach (TextBox box in allTextBoxes)
                 {
                     if (box.Name != "student_Verbal_Procent")
@@ -212,7 +213,11 @@ namespace GradeCalculatorDesktop
                 {
                     selectedStudentName.Content = focusedStudent.firstName + " " + focusedStudent.lastName;
                     if (focusedStudent.gradeData != null)
-                    {//todo: else clauses erweitern um mark content und calculate totals
+                    {
+                        foreach (Label label in allFocusedLabels)
+                        {
+                            label.Content = "-";
+                        }
                         gradeData = focusedStudent.gradeData;
                         if (gradeData.percentagePB1 != null)
                         {
@@ -221,7 +226,6 @@ namespace GradeCalculatorDesktop
                         else
                         {
                             student_AP_Teil_1_Procent.Text = "";
-                            student_AP_Teil_1_Mark.Content = "-";
                         }
                         if (gradeData.percentageProject != null)
                         {
@@ -230,7 +234,6 @@ namespace GradeCalculatorDesktop
                         else
                         {
                             student_Project_Procent.Text = "";
-                            student_Project_Mark.Content = "-";
                         }
                         if (gradeData.percentagePresentation != null)
                         {
@@ -258,7 +261,6 @@ namespace GradeCalculatorDesktop
                         else
                         {
                             student_Theory1_Procent.Text = "";
-                            student_Theory1_Mark.Content = "-";
                         }
                         if (gradeData.percentageVariableTwo != null && gradeData.percentageVariableTwo != "")
                         {
@@ -279,7 +281,6 @@ namespace GradeCalculatorDesktop
                         else
                         {
                             student_Theory2_Procent.Text = "";
-                            student_Theory2_Mark.Content = "-";
                         }
                         if (gradeData.percentageWiSo != null && gradeData.percentageWiSo != "")
                         {
@@ -294,18 +295,15 @@ namespace GradeCalculatorDesktop
                                     percentage = int.Parse(gradeData.percentageWiSo)
                                 };
                                 forOralAssessment.Add(nameAndValueStructure);
-                            }                            
                             }
                         }
                         else
                         {
                             student_Economy_Procent.Text = string.Empty;
-                            student_Economy_Mark.Content = "-";
                         }
                         if (gradeData.percentageOralAssessment != null)
                         {
                             student_Verbal_Procent.Text = gradeData.percentageOralAssessment;
-                                                        
                         }
                         else
                         {
@@ -379,7 +377,7 @@ namespace GradeCalculatorDesktop
                             else
                             {
                                 totalProjectPart(asNumber, 0);
-                                allPercentages.Add(2); ;
+                                allPercentages.Add(2);
                             }
                             student_Project_Mark.Content = grade;
                             break;
@@ -427,14 +425,15 @@ namespace GradeCalculatorDesktop
                                 };
                                 foreach (NameAndValueStructure option in forOralAssessment)
                                 {
-                                    if(option.name == tb.Name)
+                                    if (option.name == tb.Name)
                                     {
                                         alreadyThere = true;
                                     }
                                 }
-                                    
-                                if (!alreadyThere) { 
-                                forOralAssessment.Add(nameAndValueStructure);
+
+                                if (!alreadyThere)
+                                {
+                                    forOralAssessment.Add(nameAndValueStructure);
                                 }
                             }
                             break;
@@ -466,14 +465,15 @@ namespace GradeCalculatorDesktop
                                 };
                                 foreach (NameAndValueStructure option in forOralAssessment)
                                 {
-                                    if(option.name == tb.Name)
+                                    if (option.name == tb.Name)
                                     {
                                         alreadyThere = true;
                                     }
                                 }
-                                    
-                                if (!alreadyThere) { 
-                                forOralAssessment.Add(nameAndValueStructure);
+
+                                if (!alreadyThere)
+                                {
+                                    forOralAssessment.Add(nameAndValueStructure);
                                 }
                             }
                             break;
@@ -625,9 +625,10 @@ namespace GradeCalculatorDesktop
                 }
             }
         }
+
         public void oralAssessmentEnabler(object sender, SelectionChangedEventArgs e)
         {
-            oralEnabled = true;
+            student_Verbal_Procent.IsEnabled = true;
         }
 
         public void writeMarkToLabel(int percentage, string textBoxName)
@@ -639,6 +640,7 @@ namespace GradeCalculatorDesktop
                 {
                     case "student_AP_Teil_1_Procent":
                         student_AP_Teil_1_Mark.Content = grade;
+                        allPercentages.Add(1);
                         break;
 
                     case "student_Project_Procent":
@@ -647,12 +649,14 @@ namespace GradeCalculatorDesktop
                         if (int.TryParse(otherPart, out int asNumber))
                         {
                             totalProjectPart(percentage, asNumber);
-                            allPercentages.Add(2);
+                            if (!allPercentages.Contains(2))
+                            { allPercentages.Add(2); }
                         }
                         else
                         {
                             totalProjectPart(percentage, 0);
-                            allPercentages.Add(2);
+                            if (!allPercentages.Contains(2))
+                            { allPercentages.Add(2); }
                         }
                         totalPartTwo();
                         break;
@@ -663,38 +667,48 @@ namespace GradeCalculatorDesktop
                         if (int.TryParse(projectPart, out int partNumber))
                         {
                             totalProjectPart(percentage, partNumber);
-                            allPercentages.Add(2);
+                            if (!allPercentages.Contains(2))
+                            { allPercentages.Add(2); }
                         }
                         else
                         {
                             totalProjectPart(percentage, 0);
-                            allPercentages.Add(2);
+                            if (!allPercentages.Contains(2))
+                            { allPercentages.Add(2); };
                         }
                         totalPartTwo();
                         break;
 
                     case "student_Theory1_Procent":
                         student_Theory1_Mark.Content = grade;
+                        allPercentages.Add(3);
                         totalPartTwo();
                         break;
 
                     case "student_Theory2_Procent":
                         student_Theory2_Mark.Content = grade;
+                        allPercentages.Add(4);
                         totalPartTwo();
                         break;
 
                     case "student_Economy_Procent":
                         student_Economy_Mark.Content = grade;
+                        allPercentages.Add(5);
                         totalPartTwo();
                         break;
 
                     case "student_Verbal_Procent":
                         student_Verbal_Mark.Content = grade;
+                        allPercentages.Add(6);
                         totalPartTwo();
                         break;
 
                     default:
                         break;
+                }
+                if (allPercentages.Count >= 5)
+                {
+                    calculateTotal();
                 }
             }
             else
@@ -704,7 +718,7 @@ namespace GradeCalculatorDesktop
         }
 
         //todo: write methods to calculate all the different totals and decide where to call
-        //deletes the focused Student from List and, if file was chosen from file, too
+        //deletes the focused Student from List
         public void removeStudent(object sender, RoutedEventArgs e)
         {
             ObservableCollection<Student> students = new ObservableCollection<Student>();
@@ -871,7 +885,6 @@ namespace GradeCalculatorDesktop
             string projectString = (string)student_Project_Total_Procent.Content;
             if (projectString != "-" && student_Theory1_Procent.Text != "" && student_Theory2_Procent.Text != "" && student_Economy_Procent.Text != "")
             {
-                
                 int project = int.Parse(projectString);
                 int theoryOne = int.Parse(student_Theory1_Procent.Text);
                 int theoryTwo = int.Parse(student_Theory2_Procent.Text);
@@ -882,7 +895,6 @@ namespace GradeCalculatorDesktop
                 int grade = Calculations.calculateGrade(total);
                 student_Result_Mark.Content = grade;
             }
-
         }
 
         private void calculateTotal()
@@ -900,7 +912,28 @@ namespace GradeCalculatorDesktop
             student_Total_Mark.Content = grade;
             bool totalMarkGoodEnough = grade <= 4;
             bool partTwoGoodEnough = int.Parse(student_Result_Mark.Content.ToString()) <= 4;
-
+            Label[] marksPartTwo = new Label[] { student_Project_Total_Mark, student_Theory1_Mark, student_Theory2_Mark, student_Economy_Mark };
+            int counter = 0;
+            foreach (Label label in marksPartTwo)
+            {
+                if (label.Content is int)
+                {
+                    int asNumber = (int)label.Content;
+                    if (asNumber >= 5)
+                    {
+                        counter++;
+                    }
+                }
+            }
+            bool notTooManyFivesInPartTwo = counter <= 1;
+            if (totalMarkGoodEnough && partTwoGoodEnough && notTooManyFivesInPartTwo)
+            {
+                grade_As_Word.Content = "Bestanden";
+            }
+            else
+            {
+                grade_As_Word.Content = "Nicht Bestanden";
+            }
         }
 
         private void calcWithOralAssessment(object sender, RoutedEventArgs e)
