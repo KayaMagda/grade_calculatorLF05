@@ -561,6 +561,7 @@ namespace GradeCalculatorDesktop
                 {
                     int grade = Calculations.calculateGrade(asNumber);
                     bool alreadyThere = false;
+                    bool deleteOption = false;
                     switch (tb.Name)
                     {
                         case "student_AP_Teil_1_Procent":
@@ -633,6 +634,7 @@ namespace GradeCalculatorDesktop
                                         }
                                     }
                                 }
+                                deleteOption = true;
                             }
                             else
                             {
@@ -675,6 +677,7 @@ namespace GradeCalculatorDesktop
                                         }
                                     }
                                 }
+                                deleteOption = true;
                             }
                             else
                             {
@@ -722,6 +725,7 @@ namespace GradeCalculatorDesktop
                                         }
                                     }
                                 }
+                                deleteOption = true;
                             }
                             else
                             {
@@ -762,7 +766,7 @@ namespace GradeCalculatorDesktop
                             break;
                     }                   
                     if (copyForChange.Count != 0)
-                    {
+                    {//todo: add deleteOption clause
                        
                         if (forOralAssessment[0].name == "noOptions")
                         {
