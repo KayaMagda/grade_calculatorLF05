@@ -32,13 +32,17 @@ namespace GradeCalculatorDesktop
             {
                 student = sentStudent;
                 firstName.Text = student.firstName;
+                firstNameValid = true;
                 lastName.Text = student.lastName;
+                lastNameValid = true;
                 studentNumber.Text = student.studentId.ToString();
+                studentNumberValid = true;
                 foreach (Specialty specialty in specialtys)
                 {
                     if (specialty.specialtyId == student.specialty)
                     {
                         studentSpecialty.SelectedItem = specialty;
+                        specialtySelected = true;
                     }
                 }
             }

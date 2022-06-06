@@ -237,6 +237,7 @@ namespace GradeCalculatorDesktop
                 if (focusedStudent != null)
                 {
                     selectedStudentName.Content = focusedStudent.firstName + " " + focusedStudent.lastName;
+                    Keyboard.Focus(student_AP_Teil_1_Procent);
                     if (focusedStudent.gradeData != null)
                     {
                         foreach (Label label in allFocusedLabels)
@@ -364,6 +365,16 @@ namespace GradeCalculatorDesktop
                     }
                 }
                 saveButton.IsEnabled = true;
+                if (forOralAssessment.Count == 0)
+                {
+                    NameAndValueStructure noOptions = new NameAndValueStructure()
+                    {
+                        name = "noOptions",
+                        value = "Keine Fünfen in den relevanten Fächern",
+                        percentage = -1,
+                    };
+                    forOralAssessment.Add(noOptions);
+                }
                 oralAssessment.ItemsSource = forOralAssessment;
             }
         }
@@ -521,6 +532,16 @@ namespace GradeCalculatorDesktop
                     }
                 }
                 saveButton.IsEnabled = true;
+                if (forOralAssessment.Count == 0)
+                {
+                    NameAndValueStructure noOptions = new NameAndValueStructure()
+                    {
+                        name = "noOptions",
+                        value = "Keine Fünfen in den relevanten Fächern",
+                        percentage = -1,
+                    };
+                    forOralAssessment.Add(noOptions);
+                }
                 oralAssessment.ItemsSource = forOralAssessment;
             }
         }
@@ -660,7 +681,7 @@ namespace GradeCalculatorDesktop
                                 NameAndValueStructure nameAndValueStructure = new NameAndValueStructure()
                                 {
                                     name = tb.Name,
-                                    value = assessmentNames[1],
+                                    value = assessmentNames[2],
                                     percentage = int.Parse(gradeData.percentageVariableTwo)
                                 };
                                 foreach (NameAndValueStructure option in forOralAssessment)
@@ -739,14 +760,19 @@ namespace GradeCalculatorDesktop
 
                         default:
                             break;
-                    }
+                    }                   
                     if (copyForChange.Count != 0)
                     {
-                        forOralAssessment.Clear();
+                       
+                        if (forOralAssessment[0].name == "noOptions")
+                        {
+                            forOralAssessment.RemoveAt(0);
+                        }
                         foreach (NameAndValueStructure option in copyForChange)
                         {
-                            forOralAssessment.Add(option);
-                        }
+                            if (!forOralAssessment.Contains(option))
+                            { forOralAssessment.Add(option); }
+                        }                        
                         oralAssessment.ItemsSource = forOralAssessment;
                     }
                     else
@@ -1052,7 +1078,7 @@ namespace GradeCalculatorDesktop
                     {
                         if (savedStudent != string.Empty)
                         {
-                            if (savedStudent.Contains(compareString) || savedStudent.Contains(compareStringTwo)
+                            if (savedStudent.Contains(compareString) || savedStudent.Contains(compareStringTwo))
                             {
                                 fileContent = fileContent.Replace(savedStudent, studentString);
                                 await using (StreamWriter writer = new StreamWriter(filePath))
@@ -1086,7 +1112,10 @@ namespace GradeCalculatorDesktop
             int asNumber = 0;
             if (!isNumber)
             {
-                MessageBox.Show("Bitte nur Zahlen eingeben.");
+                if (e.Text == "\r")
+                { MessageBox.Show("Um in die nächste Box zu wechseln bitte Tab drücken."); }
+                else
+                { MessageBox.Show("Bitte nur Zahlen eingeben."); }
                 e.Handled = true;
             }
             else if (tb.Text != string.Empty)
@@ -1206,6 +1235,7 @@ namespace GradeCalculatorDesktop
                     }
                 }
             }
+            oralAssessment.IsEnabled = false;
         }
 
         private void selectedStudentModifyButton_Click(object sender, RoutedEventArgs e)
