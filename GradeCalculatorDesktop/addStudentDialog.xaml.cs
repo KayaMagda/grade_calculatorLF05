@@ -21,13 +21,27 @@ namespace GradeCalculatorDesktop
         private bool firstNameValid = false;
         private bool lastNameValid = false;
 
-        public addStudentDialog(List<Specialty> specialtys)
+        public addStudentDialog(List<Specialty> specialtys, Student? sentStudent)
         {
             InitializeComponent();
             this.specialtys = specialtys;
             studentSpecialty.ItemsSource = specialtys;
             studentSpecialty.DisplayMemberPath = "specialtyName";
             DataObject.AddPastingHandler(studentNumber, PasteHandler);
+            if (sentStudent != null)
+            {
+                student = sentStudent;
+                firstName.Text = student.firstName;
+                lastName.Text = student.lastName;
+                studentNumber.Text = student.studentId.ToString();
+                foreach (Specialty specialty in specialtys)
+                {
+                    if (specialty.specialtyId == student.specialty)
+                    {
+                        studentSpecialty.SelectedItem = specialty;
+                    }
+                }
+            }
         }
 
         public void onlyNumbersAllowed(object sender, TextCompositionEventArgs e)
