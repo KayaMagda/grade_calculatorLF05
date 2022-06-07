@@ -404,6 +404,7 @@ namespace GradeCalculatorDesktop
                     if (box.Name != "student_Verbal_Procent")
                     { box.IsEnabled = true; }
                 }
+                student_Verbal_Procent.IsEnabled = false;
 
                 Specialty focusedStudentSpecialty = specialtys.Find(specialty => specialty.specialtyId == focusedStudent.specialty);
                 string[] assessmentNames = focusedStudentSpecialty.specialtyVariableAssesments;
@@ -929,7 +930,7 @@ namespace GradeCalculatorDesktop
         {
             if ((string)oralAssessment.SelectedValue != "noOptions")
             {
-                if ((string)grade_As_Word.Content != "Nicht bestanden")
+                if ((string)grade_As_Word.Content == "Nicht bestanden")
                 {
                     student_Verbal_Procent.IsEnabled = true;
                 }
@@ -1080,6 +1081,7 @@ namespace GradeCalculatorDesktop
                 {
                     foreach (Student student in addedStudents)
                     {
+                        //todo: check for verbal percentage
                         string studentString = JsonSerializer.Serialize(student);
                         listString += studentString;
                         listString += ";";

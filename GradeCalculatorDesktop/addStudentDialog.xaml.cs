@@ -66,7 +66,6 @@ namespace GradeCalculatorDesktop
             {
                 studentNumberValid = false;
             }
-            
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -99,8 +98,12 @@ namespace GradeCalculatorDesktop
             }
             else
             {
-                firstNameValid = false;
-                lastNameValid = false;
+                if (tb.Name == "firstName")
+                { firstNameValid = false; }
+                else if (tb.Name == "lastName")
+                {
+                    lastNameValid = false;
+                }
             }
         }
 
@@ -134,7 +137,6 @@ namespace GradeCalculatorDesktop
             if (e.Key == Key.Space)
                 e.Handled = false;
         }
-       
 
         private void saveStudent(object sender, RoutedEventArgs e)
         {
@@ -154,6 +156,7 @@ namespace GradeCalculatorDesktop
                 MessageBox.Show("Bitte gib valide Schüler Daten ein.");
             }
         }
+
         private void closeDialog(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
