@@ -151,9 +151,17 @@ namespace GradeCalculatorDesktop
                 };
                 DialogResult = true;
             }
-            else
+            else if (!lastNameValid || !firstNameValid)
             {
-                MessageBox.Show("Bitte gib valide Schüler Daten ein.");
+                MessageBox.Show("Bitte gib einen Namen ein der länger als ein Buchstabe ist");
+            }
+            else if (!studentNumberValid)
+            {
+                MessageBox.Show("Bitte gib eine Nummer mit sieben Ziffern ein");
+            }
+            else if (!specialtySelected)
+            {
+                MessageBox.Show("Bitte wähle einen Fachbereich.");
             }
         }
 
