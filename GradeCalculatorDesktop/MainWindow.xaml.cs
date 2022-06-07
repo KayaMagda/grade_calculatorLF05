@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace GradeCalculatorDesktop
 {
@@ -1252,11 +1253,12 @@ namespace GradeCalculatorDesktop
             bool notTooManyFivesInPartTwo = counter <= 1;
             if (totalMarkGoodEnough && partTwoGoodEnough && notTooManyFivesInPartTwo)
             {
+                grade_As_Word.Foreground = Brushes.LightGreen;
                 grade_As_Word.Content = "Bestanden";
             }
             else
             {
-                grade_As_Word.Foreground = System.Windows.Media.Brushes.Red;
+                grade_As_Word.Foreground = Brushes.Red;
                 grade_As_Word.Content = "Nicht Bestanden";
             }
         }
@@ -1301,6 +1303,8 @@ namespace GradeCalculatorDesktop
                     }
                 }
             }
+            totalPartTwo();
+            calculateTotal();
             oralAssessment.IsEnabled = false;
         }
 

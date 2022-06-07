@@ -62,6 +62,10 @@ namespace GradeCalculatorDesktop
             {
                 studentNumberValid = true;
             }
+            else
+            {
+                studentNumberValid = false;
+            }
             
         }
 
@@ -82,16 +86,21 @@ namespace GradeCalculatorDesktop
                 MessageBox.Show("Bitte nur Buchstaben eingeben.");
                 e.Handled = true;
             }
-            if (tb.Text.Length > 1)
+            if (tb.Text.Length > 2)
             {
                 if (tb.Name == "firstName")
                 {
                     firstNameValid = true;
                 }
-                else
+                else if (tb.Name == "lastName")
                 {
                     lastNameValid = true;
                 }
+            }
+            else
+            {
+                firstNameValid = false;
+                lastNameValid = false;
             }
         }
 
