@@ -143,13 +143,23 @@ namespace GradeCalculatorDesktop
         {
             if (lastNameValid && firstNameValid && studentNumberValid && specialtySelected)
             {
-                student = new Student()
+                if (student == null)
                 {
-                    studentId = int.Parse(studentNumber.Text),
-                    firstName = firstName.Text,
-                    lastName = lastName.Text,
-                    specialty = selectedSpecialty!.specialtyId
-                };
+                    student = new Student()
+                    {
+                        studentId = int.Parse(studentNumber.Text),
+                        firstName = firstName.Text,
+                        lastName = lastName.Text,
+                        specialty = selectedSpecialty!.specialtyId
+                    };
+                }
+                else
+                {
+                    student.studentId = int.Parse(studentNumber.Text);
+                    student.firstName = firstName.Text;
+                    student.lastName = lastName.Text;
+                    student.specialty = selectedSpecialty!.specialtyId;
+                }
                 DialogResult = true;
             }
             else if (!lastNameValid || !firstNameValid)
