@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:GradeCalculatorDesktop"
         mc:Ignorable="d"
         Title="Prüfling hinzufügen" Height="300" Width="430"
-        Background="#30336b">
+        Background="#30336b"
+        ResizeMode ="NoResize">
     <Grid Margin="10">
         <Grid.Resources>
             <!-- Default settings for controls -->
