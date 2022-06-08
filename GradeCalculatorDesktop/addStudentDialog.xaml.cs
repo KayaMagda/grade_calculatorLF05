@@ -58,7 +58,7 @@ namespace GradeCalculatorDesktop
                 MessageBox.Show("Bitte nur Zahlen eingeben.");
                 e.Handled = true;
             }
-            if (tb.Text.Length == 6)
+            if (tb.Text.Length >= 6)
             {
                 studentNumberValid = true;
             }
@@ -85,7 +85,7 @@ namespace GradeCalculatorDesktop
                 MessageBox.Show("Bitte nur Buchstaben eingeben.");
                 e.Handled = true;
             }
-            if (tb.Text.Length > 2)
+            if (tb.Text.Length >= 1)
             {
                 if (tb.Name == "firstName")
                 {

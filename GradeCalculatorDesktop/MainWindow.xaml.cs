@@ -33,6 +33,8 @@ namespace GradeCalculatorDesktop
         private ObservableCollection<NameAndValueStructure> forOralAssessment;
         private ObservableCollection<NameAndValueStructure> copyForChange;
         private List<int> allPercentages = new List<int>();
+        private int formerPercentage = 0;
+        private TextBox? boxToReset;
 
         public MainWindow()
         {
@@ -1190,7 +1192,8 @@ namespace GradeCalculatorDesktop
 
         private void totalProjectPart(int percentProject, int percentPresentation)
         {
-            double total = (percentProject + percentPresentation) / 2;
+            int both = percentProject + percentPresentation;
+            float total = (float)both / 2;
             int totalRounded = (int)Math.Round(total);
             student_Project_Total_Procent.Content = totalRounded.ToString();
             int grade = Calculations.calculateGrade(totalRounded);
@@ -1203,10 +1206,14 @@ namespace GradeCalculatorDesktop
             if (projectString != "-" && student_Theory1_Procent.Text != "" && student_Theory2_Procent.Text != "" && student_Economy_Procent.Text != "")
             {
                 int project = int.Parse(projectString);
+                int projectFactored = project * 50;
                 int theoryOne = int.Parse(student_Theory1_Procent.Text);
+                int theoryOneFactored = theoryOne * 10;
                 int theoryTwo = int.Parse(student_Theory2_Procent.Text);
+                int theoryTwoFacored = theoryTwo * 10;
                 int wiPo = int.Parse(student_Economy_Procent.Text);
-                double forTotal = (project + theoryOne + theoryTwo + wiPo) / 4;
+                int wiPoFactored = wiPo * 10;
+                float forTotal = (float)(projectFactored + theoryOneFactored + theoryTwoFacored + wiPoFactored) / 80;
                 int total = (int)Math.Round(forTotal);
                 student_Result_Procent.Content = total;
                 int grade = Calculations.calculateGrade(total);
@@ -1243,7 +1250,20 @@ namespace GradeCalculatorDesktop
                 }
             }
             bool notTooManyFivesInPartTwo = counter <= 1;
-            if (totalMarkGoodEnough && partTwoGoodEnough && notTooManyFivesInPartTwo)
+            bool areThereSixs = false;
+            foreach (Label label in marksPartTwo)
+            {
+                if (label.Content is int)
+                {
+                    int asNumber = (int)label.Content;
+                    if (asNumber == 6)
+                    {
+                        areThereSixs = true;
+                    }
+                }
+            }
+
+            if (totalMarkGoodEnough && partTwoGoodEnough && notTooManyFivesInPartTwo && !areThereSixs)
             {
                 grade_As_Word.Foreground = Brushes.LightGreen;
                 grade_As_Word.Content = "Bestanden";
@@ -1272,6 +1292,7 @@ namespace GradeCalculatorDesktop
                     if (box.Name == selectedSubject)
                     {
                         int currentPercentage = int.Parse(box.Text);
+                        formerPercentage = currentPercentage;
                         int newPercentage = Calculations.newPercentage(currentPercentage, percentage);
                         box.Text = newPercentage.ToString();
                         int newGrade = Calculations.calculateGrade(newPercentage);
@@ -1280,17 +1301,22 @@ namespace GradeCalculatorDesktop
                         {
                             case "student_Theory1_Procent":
                                 student_Theory1_Mark.Content = newGrade;
+                                boxToReset = box;
                                 focuesdGrades.percentageVariableOne = newPercentage.ToString();
 
                                 break;
 
                             case "student_Theory2_Procent":
                                 student_Theory2_Mark.Content = newGrade;
+                                boxToReset = box;
+
                                 focuesdGrades.percentageVariableTwo = newPercentage.ToString();
                                 break;
 
                             case "student_Economy_Procent":
                                 student_Economy_Mark.Content = newGrade;
+                                boxToReset = box;
+
                                 focuesdGrades.percentageWiSo = newPercentage.ToString();
                                 break;
 
@@ -1299,6 +1325,10 @@ namespace GradeCalculatorDesktop
                         }
                     }
                 }
+            } else if (tb.Text == "")
+            {
+                boxToReset.Text = formerPercentage.ToString();
+                student_Verbal_Mark.Content = "-";
             }
             totalPartTwo();
             calculateTotal();
