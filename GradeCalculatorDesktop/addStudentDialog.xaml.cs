@@ -99,8 +99,13 @@ namespace GradeCalculatorDesktop
             }
             else
             {
-                firstNameValid = false;
-                lastNameValid = false;
+               if (tb.Name == "firstName")
+                {
+                    firstNameValid = false;
+                } else if (tb.Name == "lastName")
+                {
+                    lastNameValid= false;
+                }
             }
         }
 
