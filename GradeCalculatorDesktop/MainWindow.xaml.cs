@@ -22,6 +22,7 @@ namespace GradeCalculatorDesktop
         private Student? storeChangedData;
         private GradeData? gradeData;
         private ObservableCollection<Student>? addedStudents;
+        private ObservableCollection<Student>? changeStudents;
         private List<Specialty> specialtys;
         private Specialty? selectedSpecialty;
         private TextBox[] allTextBoxes;
@@ -30,7 +31,7 @@ namespace GradeCalculatorDesktop
         private string previouslyOpenedFile;
         private int? selectedSpecialtyId;
         private ObservableCollection<NameAndValueStructure> forOralAssessment;
-        ObservableCollection<NameAndValueStructure> copyForChange;
+        private ObservableCollection<NameAndValueStructure> copyForChange;
         private List<int> allPercentages = new List<int>();
 
         public MainWindow()
@@ -69,8 +70,6 @@ namespace GradeCalculatorDesktop
                 box.IsEnabled = false;
             }
             studentTable.Items.Clear();
-
-           
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -215,14 +214,14 @@ namespace GradeCalculatorDesktop
                     }
                 }
             }
-        }
+        }       
 
         public void focusStudent(object sender, SelectionChangedEventArgs e)
         {
             if (studentTable.SelectedItem != null)
             {
                 forOralAssessment = new ObservableCollection<NameAndValueStructure>();
-                focusedStudent = studentTable.SelectedValue as Student;
+                focusedStudent = studentTable.SelectedItem as Student;
                 selectedStudentSaveButton.IsEnabled = true;
                 selectedStudentModifyButton.IsEnabled = true;
                 selectedStudentDeleteButton.IsEnabled = true;
@@ -232,6 +231,7 @@ namespace GradeCalculatorDesktop
                     if (box.Name != "student_Verbal_Procent")
                     { box.IsEnabled = true; }
                 }
+                student_Verbal_Procent.IsEnabled = false;
 
                 Specialty focusedStudentSpecialty = specialtys.Find(specialty => specialty.specialtyId == focusedStudent.specialty);
                 string[] assessmentNames = focusedStudentSpecialty.specialtyVariableAssesments;
@@ -291,6 +291,7 @@ namespace GradeCalculatorDesktop
                                 };
                                 forOralAssessment.Add(nameAndValueStructure);
                             }
+                            
                         }
                         else
                         {
@@ -311,6 +312,7 @@ namespace GradeCalculatorDesktop
                                 };
                                 forOralAssessment.Add(nameAndValueStructure);
                             }
+                            
                         }
                         else
                         {
@@ -330,6 +332,7 @@ namespace GradeCalculatorDesktop
                                 };
                                 forOralAssessment.Add(nameAndValueStructure);
                             }
+                            
                         }
                         else
                         {
@@ -337,12 +340,12 @@ namespace GradeCalculatorDesktop
                         }
                         if (gradeData.percentageOralAssessment != null)
                         {
-                            student_Verbal_Procent.Text = gradeData.percentageOralAssessment;
+                        
+                            student_Verbal_Procent.Text = gradeData.percentageOralAssessment;                           
                         }
                         else
                         {
                             student_Verbal_Procent.Text = "";
-                            student_Verbal_Mark.Content = "-";
                         }
 
                         standardAssessmentTwo.Content = assessmentNames[0];
@@ -357,11 +360,9 @@ namespace GradeCalculatorDesktop
                                 writeMarkToLabel(percentage, box.Name);
                             }
                         }
-                        oralAssessment.ItemsSource = forOralAssessment;
                     }
                     else
                     {
-                        Keyboard.Focus(student_AP_Teil_1_Procent);
                         gradeData = new GradeData();
                         focusedStudent.gradeData = gradeData;
                         foreach (TextBox box in allTextBoxes)
@@ -387,8 +388,7 @@ namespace GradeCalculatorDesktop
                 }
                 oralAssessment.ItemsSource = forOralAssessment;
             }
-        }
-
+        } 
         public void focusStudent(Student student)
         {
             if (studentTable.SelectedItem != null)
@@ -404,6 +404,7 @@ namespace GradeCalculatorDesktop
                     if (box.Name != "student_Verbal_Procent")
                     { box.IsEnabled = true; }
                 }
+                student_Verbal_Procent.IsEnabled = false;
 
                 Specialty focusedStudentSpecialty = specialtys.Find(specialty => specialty.specialtyId == focusedStudent.specialty);
                 string[] assessmentNames = focusedStudentSpecialty.specialtyVariableAssesments;
@@ -453,7 +454,7 @@ namespace GradeCalculatorDesktop
                         {
                             student_Theory1_Procent.Text = gradeData.percentageVariableOne;
                             int grade = Calculations.calculateGrade(int.Parse(gradeData.percentageVariableOne));
-                            if (grade >= 5)
+                            if (grade >= 5 )
                             {
                                 NameAndValueStructure nameAndValueStructure = new NameAndValueStructure()
                                 {
@@ -463,6 +464,7 @@ namespace GradeCalculatorDesktop
                                 };
                                 forOralAssessment.Add(nameAndValueStructure);
                             }
+                            
                         }
                         else
                         {
@@ -483,6 +485,7 @@ namespace GradeCalculatorDesktop
                                 };
                                 forOralAssessment.Add(nameAndValueStructure);
                             }
+                           
                         }
                         else
                         {
@@ -502,6 +505,7 @@ namespace GradeCalculatorDesktop
                                 };
                                 forOralAssessment.Add(nameAndValueStructure);
                             }
+                           
                         }
                         else
                         {
@@ -510,11 +514,9 @@ namespace GradeCalculatorDesktop
                         if (gradeData.percentageOralAssessment != null)
                         {
                             student_Verbal_Procent.Text = gradeData.percentageOralAssessment;
-                        }
-                        else
+                        } else
                         {
                             student_Verbal_Procent.Text = "";
-                            student_Verbal_Mark.Content = "-";
                         }
 
                         standardAssessmentTwo.Content = assessmentNames[0];
@@ -561,7 +563,6 @@ namespace GradeCalculatorDesktop
 
         public void writeMarkToLabel(object sender, RoutedEventArgs e)
         {
-           
             bool forOralDropdownFilled = forOralAssessment.Count != 0;
             Specialty focusedStudentSpecialty = specialtys.Find(specialty => specialty.specialtyId == focusedStudent.specialty);
             string[] assessmentNames = focusedStudentSpecialty.specialtyVariableAssesments;
@@ -647,7 +648,6 @@ namespace GradeCalculatorDesktop
                                             option.percentage = int.Parse(gradeData.percentageVariableOne);
                                         }
                                     }
-                                    
                                 }
                             }
                             else
@@ -687,12 +687,9 @@ namespace GradeCalculatorDesktop
                                     {
                                         if (option.name == tb.Name)
                                         {
-
                                             option.percentage = int.Parse(gradeData.percentageVariableTwo);
-                                           
                                         }
                                     }
-                                    
                                 }
                             }
                             else
@@ -735,15 +732,11 @@ namespace GradeCalculatorDesktop
                                 {
                                     foreach (NameAndValueStructure option in forOralAssessment)
                                     {
-                                        
                                         if (option.name == tb.Name)
                                         {
-
                                             option.percentage = int.Parse(gradeData.percentageWiSo);
-                                          
                                         }
                                     }
-                                    
                                 }
                             }
                             else
@@ -784,8 +777,8 @@ namespace GradeCalculatorDesktop
                         default:
                             break;
                     }
-                    
-                        foreach (NameAndValueStructure option in forOralAssessment)
+
+                    foreach (NameAndValueStructure option in forOralAssessment)
                     {
                         if (option.percentage < 50 && option.percentage != -1)
                         {
@@ -929,7 +922,7 @@ namespace GradeCalculatorDesktop
         {
             if ((string)oralAssessment.SelectedValue != "noOptions")
             {
-                if ((string)grade_As_Word.Content != "Nicht bestanden")
+                if ((string)grade_As_Word.Content == "Nicht Bestanden")
                 {
                     student_Verbal_Procent.IsEnabled = true;
                 }
@@ -1080,6 +1073,7 @@ namespace GradeCalculatorDesktop
                 {
                     foreach (Student student in addedStudents)
                     {
+                        //todo: check for verbal percentage
                         string studentString = JsonSerializer.Serialize(student);
                         listString += studentString;
                         listString += ";";
@@ -1146,9 +1140,8 @@ namespace GradeCalculatorDesktop
                         {
                             if (savedStudent.Contains(compareString) || savedStudent.Contains(compareStringTwo))
                             {
-                                
-                                 fileContent = fileContent.Replace(savedStudent, studentString); 
-                                
+                                fileContent = fileContent.Replace(savedStudent, studentString);
+
                                 await using (StreamWriter writer = new StreamWriter(filePath))
                                 {
                                     writer.WriteLine(fileContent);
@@ -1163,8 +1156,7 @@ namespace GradeCalculatorDesktop
                 }
                 else
                 {
-                    
-                     Student.serializeStudentAsync(focusedStudent, filePath); 
+                    Student.serializeStudentAsync(focusedStudent, filePath);
                 }
                 MessageBox.Show("Prüflingsdaten wurden gespeichert");
             }
@@ -1265,7 +1257,7 @@ namespace GradeCalculatorDesktop
 
         private void calcWithOralAssessment(object sender, RoutedEventArgs e)
         {
-            //todo: test
+            GradeData focuesdGrades = focusedStudent.gradeData;
             string selectedSubject = (string)oralAssessment.SelectedValue;
             TextBox tb = sender as TextBox;
             TextBox[] variableAssessments = new TextBox[] { student_Theory1_Procent, student_Theory2_Procent, student_Economy_Procent };
@@ -1273,6 +1265,7 @@ namespace GradeCalculatorDesktop
             if (isNumber)
             {
                 int grade = Calculations.calculateGrade(percentage);
+                focuesdGrades.percentageOralAssessment = percentage.ToString();
                 student_Verbal_Mark.Content = grade;
                 foreach (TextBox box in variableAssessments)
                 {
@@ -1287,14 +1280,18 @@ namespace GradeCalculatorDesktop
                         {
                             case "student_Theory1_Procent":
                                 student_Theory1_Mark.Content = newGrade;
+                                focuesdGrades.percentageVariableOne = newPercentage.ToString();
+
                                 break;
 
                             case "student_Theory2_Procent":
                                 student_Theory2_Mark.Content = newGrade;
+                                focuesdGrades.percentageVariableTwo = newPercentage.ToString();
                                 break;
 
                             case "student_Economy_Procent":
                                 student_Economy_Mark.Content = newGrade;
+                                focuesdGrades.percentageWiSo = newPercentage.ToString();
                                 break;
 
                             default:
@@ -1318,6 +1315,23 @@ namespace GradeCalculatorDesktop
                 {
                     storeChangedData = focusedStudent;
                     focusStudent(editStudent.student);
+                    if (addedStudents.Count != 0)
+                    {
+                        changeStudents = new ObservableCollection<Student>();
+                        foreach (Student student in addedStudents)
+                        {
+                            if (student.studentId != focusedStudent.studentId && student.studentId != storeChangedData.studentId)
+                            {
+                               changeStudents.Add(student);
+                            }
+                        }
+                        addedStudents.Clear();
+                        addedStudents.Add(focusedStudent);
+                        foreach (Student storedStudent in changeStudents)
+                        {
+                            addedStudents.Add(storedStudent);
+                        }
+                    }
                 }
             }
         }
